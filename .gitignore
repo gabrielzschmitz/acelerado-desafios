@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Bench output
+*/bench/results/
+*/bench/tmp/
+
+# Originals cached locally (re-downloaded by reference/generate.py)
+*/reference/originals/
+
+# Build artifacts
+*.o
+*.exe
+target/
+build/
