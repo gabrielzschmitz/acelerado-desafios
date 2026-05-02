@@ -51,20 +51,32 @@ cap nada de mais vale. Detalhes na [Spec](#spec) abaixo.
   de `[0, 255]` devem ser clipados antes de escrever em `uint8`.
 
 Se você só quer ver o esqueleto da submissão rodando, em [`example/`](example/)
-mora um Dockerfile mínimo que lê stdin e escreve stdout sem alterar nada.
+moram Dockerfiles mínimos passthrough em **Python, JS, C, C++, Rust, Go e
+Zig** — escolhe a linguagem, copia, troca a lógica.
 
-### Sem I/O em arquivo
+### Como o harness roda sua solução
 
-A solução roda em container Docker com:
-
-```
---read-only        # filesystem todo somente-leitura, sem --tmpfs
---network=none     # sem rede
+```bash
+docker run --rm \
+  --cpuset-cpus=2,3 --cpus=2 \
+  --memory=1g \
+  --network=none --read-only \
+  -i <sua-imagem> < inputs/<caso>.bmp > out.bmp
 ```
 
 Sua solução **não pode escrever em nenhum arquivo**. Apenas stdin de leitura,
-stdout/stderr de escrita, e RAM. Tentar escrever em qualquer lugar falha
-com `EROFS`.
+stdout/stderr de escrita, e RAM. Tentar escrever em qualquer lugar (incluindo
+`/tmp`, `~/.cache`, `/var/log`) falha com `EROFS`.
+
+Dicas pra não bater nessa parede:
+
+- **Python**: rode com `python -B` (ou `PYTHONDONTWRITEBYTECODE=1`) pra não
+  tentar escrever `.pyc`. Bibliotecas que cacheiam em `~/.cache` (matplotlib,
+  numba JIT, etc.) podem falhar — pré-construa os caches no `Dockerfile`,
+  não em runtime, ou use só `numpy` puro.
+- **C/C++ com FFTW**: `fftw_wisdom` por default escreve em arquivo. Use
+  apenas o wisdom embutido no binário ou desligue persistência.
+- **GPU**: indisponível no bench (não tem GPU no host).
 
 ### Validação (caps duros)
 
@@ -200,15 +212,16 @@ docker build -t acelerado-ref:bench 2026-05-deblur/reference/
 
 ## Como submeter
 
-Veja [`../SUBMISSION.md`](../SUBMISSION.md). TL;DR:
+Estrutura, `meta.json` e fluxo de PR ficam no [`../SUBMISSION.md`](../SUBMISSION.md)
+genérico. Pra esse desafio especificamente:
 
-1. `solutions/<seu-usuario>/Dockerfile` constrói sua solução
-2. Container lê BMP de stdin, escreve BMP em stdout — sem escrever nenhum
-   arquivo
+1. `2026-05-deblur/solutions/<seu-usuario>/Dockerfile` constrói sua solução
+2. Container lê BMP de stdin, escreve BMP em stdout (contrato acima)
 3. PR contra a branch `submissions/<seu-usuario>` ou `main` (público)
 
 Se quiser um ponto de partida que já compila e roda sem fazer nada útil,
-copie [`example/`](example/) e substitua o conteúdo pela sua lógica.
+copie a subpasta da linguagem desejada de [`example/`](example/) e substitua
+o conteúdo pela sua lógica.
 
 ## Atribuição
 
