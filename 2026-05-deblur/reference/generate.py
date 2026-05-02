@@ -27,7 +27,6 @@ from pathlib import Path
 import numpy as np
 import requests
 from PIL import Image
-from skimage import data as sk_data
 
 sys.path.insert(0, str(Path(__file__).parent))
 import bmp_io  # noqa: E402
@@ -44,55 +43,25 @@ ORIGINALS_DIR = Path(__file__).parent / "originals"
 EXPECTED_DIR = ROOT / "expected"
 INPUTS_DIR = ROOT / "inputs"
 
-# (slug, source descriptor)
-# Source descriptor:
-#   ("skimage", "<attr>")        -> skimage.data.<attr>()
-#   ("url", "<URL>")             -> HTTP GET; fallback URLs supported as a list
-SOURCES: list[tuple[str, tuple[str, object]]] = [
-    ("cameraman", ("skimage", "camera")),
-    ("mandrill",  ("url", "https://sipi.usc.edu/database/misc/4.2.03.tiff")),
-    ("peppers",   ("url", "https://sipi.usc.edu/database/misc/4.2.07.tiff")),
-    ("airplane",  ("url", "https://sipi.usc.edu/database/misc/4.2.05.tiff")),
-    ("lake",      ("url", "https://sipi.usc.edu/database/misc/4.2.06.tiff")),
-    ("boat",      ("url", "https://sipi.usc.edu/database/misc/boat.512.tiff")),
-    ("house",     ("url", "https://sipi.usc.edu/database/misc/4.1.05.tiff")),
-    ("couple",    ("url", "https://sipi.usc.edu/database/misc/5.2.08.tiff")),
-    ("stream",    ("url", "https://sipi.usc.edu/database/misc/5.2.10.tiff")),
+# (slug, URL) — fontes do USC-SIPI
+SOURCES: list[tuple[str, str]] = [
+    ("airplane", "https://sipi.usc.edu/database/misc/4.2.05.tiff"),
+    ("lake",     "https://sipi.usc.edu/database/misc/4.2.06.tiff"),
+    ("boat",     "https://sipi.usc.edu/database/misc/boat.512.tiff"),
+    ("house",    "https://sipi.usc.edu/database/misc/4.1.05.tiff"),
+    ("stream",   "https://sipi.usc.edu/database/misc/5.2.10.tiff"),
 ]
 
 
-def fetch_skimage(attr: str) -> np.ndarray:
-    fn = getattr(sk_data, attr)
-    return np.asarray(fn())
-
-
-def fetch_url(url_or_list, slug: str) -> np.ndarray:
-    urls = url_or_list if isinstance(url_or_list, list) else [url_or_list]
-    last_err = None
-    for url in urls:
-        try:
-            r = requests.get(url, timeout=30)
-            r.raise_for_status()
-            return np.asarray(Image.open(io.BytesIO(r.content)))
-        except Exception as e:
-            last_err = e
-            print(f"  ! {slug}: {url} failed ({e.__class__.__name__})", file=sys.stderr)
-    raise RuntimeError(f"all sources failed for {slug}: {last_err}")
-
-
-def fetch(slug: str, src: tuple[str, object]) -> np.ndarray:
+def fetch(slug: str, url: str) -> np.ndarray:
     """Return the original image as a numpy array (any dtype, any channel count)."""
     cache = ORIGINALS_DIR / f"{slug}.npy"
     if cache.exists():
         return np.load(cache)
 
-    kind, val = src
-    if kind == "skimage":
-        arr = fetch_skimage(val)  # type: ignore[arg-type]
-    elif kind == "url":
-        arr = fetch_url(val, slug)
-    else:
-        raise ValueError(f"unknown source kind: {kind}")
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    arr = np.asarray(Image.open(io.BytesIO(r.content)))
 
     ORIGINALS_DIR.mkdir(parents=True, exist_ok=True)
     np.save(cache, arr)
@@ -142,11 +111,11 @@ def main() -> int:
           file=sys.stderr)
     written = []
     failed = []
-    for i, (slug, src) in enumerate(SOURCES):
+    for i, (slug, url) in enumerate(SOURCES):
         sigma = draw_sigma(i)
         try:
             print(f"[{i+1}/{len(SOURCES)}] {slug}  sigma={sigma:.3f}", flush=True)
-            raw = fetch(slug, src)
+            raw = fetch(slug, url)
             sharp = normalize(raw)
             blurred = blur_and_noise(sharp, sigma, NOISE_SIGMA, NOISE_RNG_SEED + i)
             bmp_io.write_path(EXPECTED_DIR / f"{slug}.bmp", sharp)

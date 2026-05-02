@@ -1,11 +1,9 @@
 [project]
 name = "acelerado-desafios"
 version = "0.1.0"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.4.4",
     "pillow>=12.2.0",
     "requests>=2.33.1",
-    "scikit-image>=0.26.0",
-    "scipy>=1.17.1",
 ]

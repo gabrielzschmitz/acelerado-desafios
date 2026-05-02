@@ -29,13 +29,13 @@ uv run python 2026-05-deblur/reference/generate.py
 
 # 2. Rodar o solver de referência num caso
 uv run python 2026-05-deblur/reference/wiener.py \
-    < 2026-05-deblur/inputs/cameraman.bmp \
-    > /tmp/cameraman_out.bmp
+    < 2026-05-deblur/inputs/house.bmp \
+    > /tmp/house_out.bmp
 
 # 3. Conferir o PSNR
 uv run python 2026-05-deblur/reference/score.py \
-    /tmp/cameraman_out.bmp \
-    2026-05-deblur/expected/cameraman.bmp
+    /tmp/house_out.bmp \
+    2026-05-deblur/expected/house.bmp
 ```
 
 ## Modelo direto vs inverso
