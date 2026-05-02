@@ -46,7 +46,7 @@ Cada desafio declara **uma métrica primária** em `spec.json`. Pode ser:
 
 ## Desafio atual
 
-→ [`2026-06-deblur/`](2026-06-deblur/) — Deconvolução de Wiener (deblur de imagem por FFT)
+→ [`2026-05-deblur/`](2026-05-deblur/) — Deconvolução de Wiener (deblur de imagem por FFT)
 
 ## Histórico
 

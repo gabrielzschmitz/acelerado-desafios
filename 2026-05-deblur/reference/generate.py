@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate the deblur dataset: download originals, normalize to 512x512 grayscale,
-apply a periodic Gaussian PSF (sigma=3.0) + additive Gaussian noise, and write
+apply a periodic Gaussian PSF (sigma=2.0) + additive Gaussian noise, and write
 ``inputs/<name>.bmp`` (blurred + noisy) and ``expected/<name>.bmp`` (ground truth).
 
 The forward model matches what the reference Wiener solver inverts:
@@ -34,7 +34,7 @@ NOISE_SIGMA = 1.0
 TARGET_SIZE = 512
 RNG_SEED = 42
 
-ROOT = Path(__file__).resolve().parents[1]  # 2026-06-deblur/
+ROOT = Path(__file__).resolve().parents[1]  # 2026-05-deblur/
 ORIGINALS_DIR = Path(__file__).parent / "originals"
 EXPECTED_DIR = ROOT / "expected"
 INPUTS_DIR = ROOT / "inputs"

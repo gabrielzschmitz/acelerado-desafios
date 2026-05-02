@@ -1,7 +1,7 @@
 {
   "name": "deblur",
   "title": "Deconvolução de Wiener",
-  "month": "2026-06",
+  "month": "2026-05",
   "primary_metric": "time_ms",
   "direction": "min",
   "image": {
