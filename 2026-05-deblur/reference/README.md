@@ -21,17 +21,17 @@ A partir da raiz do repo:
 
 ```bash
 # 1. Gerar o dataset (um shot, fica em cache em reference/originals/)
-uv run python 2026-06-deblur/reference/generate.py
+uv run python 2026-05-deblur/reference/generate.py
 
 # 2. Rodar o solver de referência num caso
-uv run python 2026-06-deblur/reference/wiener.py \
-    < 2026-06-deblur/inputs/cameraman.bmp \
+uv run python 2026-05-deblur/reference/wiener.py \
+    < 2026-05-deblur/inputs/cameraman.bmp \
     > /tmp/cameraman_out.bmp
 
 # 3. Conferir o PSNR
-uv run python 2026-06-deblur/reference/score.py \
+uv run python 2026-05-deblur/reference/score.py \
     /tmp/cameraman_out.bmp \
-    2026-06-deblur/expected/cameraman.bmp
+    2026-05-deblur/expected/cameraman.bmp
 ```
 
 ## Modelo direto vs inverso

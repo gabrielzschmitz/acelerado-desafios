@@ -1,4 +1,4 @@
-# Junho 2026 — Deconvolução de Wiener (deblur por FFT)
+# Maio 2026 — Deconvolução de Wiener (deblur por FFT)
 
 > **TL;DR**: você recebe uma imagem borrada por uma gaussiana 2D conhecida.
 > Tem que devolver a imagem nítida. O ranking é por **tempo de execução**
@@ -71,7 +71,7 @@ completo do container.
 {
   "primary_metric": "time_ms",
   "direction": "min",
-  "psf": {"type": "gaussian", "sigma": 3.0},
+  "psf": {"type": "gaussian", "sigma": 2.0},
   "noise": {"type": "gaussian", "sigma": 1.0},
   "validation": {"metric": "psnr", "min_db": 22.0},
   "caps": {"time_ms": 30000, "peak_rss_mb": 1024, "disk_write_mb": 50}
@@ -158,24 +158,24 @@ Pré-requisitos: `uv` (Python 3.11+), `docker`.
 
 ```bash
 # Gera o dataset (cache em reference/originals/, faz a parte de rede uma vez)
-uv run python 2026-06-deblur/reference/generate.py
+uv run python 2026-05-deblur/reference/generate.py
 
 # Roda a referência num caso e confere o PSNR
-uv run python 2026-06-deblur/reference/wiener.py \
-    < 2026-06-deblur/inputs/cameraman.bmp \
+uv run python 2026-05-deblur/reference/wiener.py \
+    < 2026-05-deblur/inputs/cameraman.bmp \
     > /tmp/cameraman_out.bmp
 
-uv run python 2026-06-deblur/reference/score.py \
+uv run python 2026-05-deblur/reference/score.py \
     /tmp/cameraman_out.bmp \
-    2026-06-deblur/expected/cameraman.bmp
+    2026-05-deblur/expected/cameraman.bmp
 # → algo tipo "29.4321"
 ```
 
 Pra rodar o bench harness na referência (precisa de `docker` + `hyperfine` + `jq`):
 
 ```bash
-docker build -t acelerado-ref:bench 2026-06-deblur/reference/
-2026-06-deblur/bench/run.sh 2026-06-deblur/reference/
+docker build -t acelerado-ref:bench 2026-05-deblur/reference/
+2026-05-deblur/bench/run.sh 2026-05-deblur/reference/
 ```
 
 ## Como submeter
