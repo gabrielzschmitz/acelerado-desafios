@@ -49,15 +49,11 @@ INPUTS_DIR = ROOT / "inputs"
 #   ("skimage", "<attr>")        -> skimage.data.<attr>()
 #   ("url", "<URL>")             -> HTTP GET; fallback URLs supported as a list
 SOURCES: list[tuple[str, tuple[str, object]]] = [
-    ("cameraman", ("skimage", "camera")),
-    ("mandrill",  ("url", "https://sipi.usc.edu/database/misc/4.2.03.tiff")),
-    ("peppers",   ("url", "https://sipi.usc.edu/database/misc/4.2.07.tiff")),
-    ("airplane",  ("url", "https://sipi.usc.edu/database/misc/4.2.05.tiff")),
-    ("lake",      ("url", "https://sipi.usc.edu/database/misc/4.2.06.tiff")),
-    ("boat",      ("url", "https://sipi.usc.edu/database/misc/boat.512.tiff")),
-    ("house",     ("url", "https://sipi.usc.edu/database/misc/4.1.05.tiff")),
-    ("couple",    ("url", "https://sipi.usc.edu/database/misc/5.2.08.tiff")),
-    ("stream",    ("url", "https://sipi.usc.edu/database/misc/5.2.10.tiff")),
+    ("airplane", ("url", "https://sipi.usc.edu/database/misc/4.2.05.tiff")),
+    ("lake",     ("url", "https://sipi.usc.edu/database/misc/4.2.06.tiff")),
+    ("boat",     ("url", "https://sipi.usc.edu/database/misc/boat.512.tiff")),
+    ("house",    ("url", "https://sipi.usc.edu/database/misc/4.1.05.tiff")),
+    ("stream",   ("url", "https://sipi.usc.edu/database/misc/5.2.10.tiff")),
 ]
 
 

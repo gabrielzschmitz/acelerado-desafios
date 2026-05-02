@@ -1,36 +1,34 @@
-# Maio 2026 — Astrofoto da Lua: desfocando o seeing
+# Maio 2026 — Drone amador: desfocando o autofoco ruim
 
 ## O cenário
 
-Numa quinta à noite em São Paulo, um astrofotógrafo amador monta no quintal um
-**telescópio Newtoniano de 130 mm** com uma **ZWO ASI120MM-S** acoplada — uma
-câmera CMOS monocromática de 1.2 MP, USB 2.0, sem sistema de resfriamento.
-Aponta pra Lua, configura ganho médio, e em 90 segundos captura **3 mil frames
-da cratera Tycho** com exposição de 5 ms cada.
+Você comprou um drone amador FPV de menos de R$ 2 mil — câmera CMOS
+monocromática de 1.2 MP, lente plástica de baixo custo, **autofoco contínuo
+barato e sem gimbal de qualidade**. Sai numa tarde de domingo filmando a
+chácara dos pais: o lago atrás da casa, a ponte do riacho, o telhado novo.
+Em 90 segundos de voo, a câmera grava **3 mil frames** com exposição de 5 ms
+cada.
 
-No software de processamento ele descobre o que todo mundo no hobby já sabe:
-**a maior parte dos frames está borrada**. Não é a câmera mexendo — é o ar.
+No software de processamento você descobre o que a comunidade já sabe:
+**a maior parte dos frames está borrada**. Não é vento e nem tremida — é o
+**autofoco do bagulho**.
 
-| Frame que saiu da câmera | Como a foto deveria ser |
+| Frame que saiu do drone | Como a foto deveria ser |
 |:---:|:---:|
-| ![borrado](docs/cameraman_inputs.png) | ![nítido](docs/cameraman_expected.png) |
+| ![borrado](docs/house_inputs.png) | ![nítido](docs/house_expected.png) |
 
-Entre o telescópio e a Lua existem 100 km de atmosfera turbulenta. Cada
-camada de ar quente subindo, ar frio descendo, vento cisalhando, age como
-uma lente fraca e mal alinhada sobre o caminho óptico. O efeito acumulado
-distorce e borra a imagem do mesmo jeito que olhar pra fundo de piscina mexida.
-A galera chama esse fenômeno de **seeing**.
-
-O seeing varia frame a frame. Em algumas noites a atmosfera está calma e o
-borrão é leve; em outras, ou apontando perto do horizonte, ele é forte. Em
-cima disso, a câmera (sem TEC pra esfriar o sensor) ainda adiciona um chiado
-fino de ruído eletrônico que aparece como granulação nas áreas escuras do
-disco lunar.
+A lente do drone tem autofoco contínuo: a cada frame o sensor recalcula
+onde focar, e como o algoritmo é ruim ele **erra de forma diferente cada
+vez**. Em algumas tomadas pega quase certo; em outras, fica bem fora de
+foco. O efeito é um **borrão aproximadamente gaussiano** cuja intensidade
+depende de quanto o autofoco errou naquele frame específico. Em cima disso,
+o sensor (sem resfriamento, ganho médio) ainda adiciona um chiado fino de
+ruído eletrônico que aparece como granulação nas áreas escuras das sombras.
 
 ## A tarefa
 
-O astrofotógrafo te paga um café se você devolver, pra cada frame ruim, a
-melhor estimativa possível de como a foto seria sem atmosfera. Concretamente:
+Você quer recuperar a melhor estimativa possível da imagem nítida pra cada
+frame ruim. Concretamente:
 **dado um BMP borrado de 512×512, escrever um BMP do mesmo tamanho com a
 versão nítida estimada**.
 
@@ -109,8 +107,8 @@ Sua solução pode (e deve) assumir que cada frame de teste foi produzido
 1. Pega a imagem nítida `nitida` (uint8, 512×512 grayscale).
 2. Sorteia um nível de borrão `σ ∈ [1.5, 3.5]` uniformemente (semente
    determinística por imagem). Esse σ controla a "largura" do desfoque —
-   1.5 é uma noite excelente em SP, 3.5 é uma noite ruim ou perto do
-   horizonte. Você **não sabe** o σ de cada frame.
+   1.5 é o autofoco quase acertando, 3.5 é o autofoco totalmente perdido.
+   Você **não sabe** o σ de cada frame.
 3. Aplica um borrão gaussiano periódico de largura σ via FFT:
    `borrada = IFFT( FFT(nitida) · FFT(kernel_σ) )`. A convolução é
    **circular** — a borda da imagem se enrola, o frame é tratado como um
@@ -143,8 +141,7 @@ Em [`reference/wiener.py`](reference/wiener.py) mora um solver
 **intencionalmente burro**: aplica o filtro de Wiener com σ fixo = 2.5 (o
 ponto médio da faixa) e regularização λ = 0.005 (calibrada pro nível de
 ruído). Quando o σ verdadeiro é próximo de 2.5 ele sai bem; quando é 1.5
-ou 3.5, sofre. Passa raspando do threshold no caso mais difícil
-(mandrill, ~21.8 dB).
+ou 3.5, sofre — é a forma mais ingênua de atacar o problema "cego".
 
 A referência **não estima** σ. Sua solução deve fazer melhor. Algumas
 direções:
@@ -157,52 +154,34 @@ direções:
 
 ## Dataset público
 
-9 imagens clássicas de processamento, todas normalizadas para 512×512
-grayscale. Originais em `reference/originals/` (gerado on-demand pelo
-script de geração, não commitado).
-
-> Reparou que **nenhuma** delas é uma foto da Lua? É proposital. Esse set
-> é pra desenvolvimento — variado, bem caracterizado, reproduzível. Os
-> **casos ocultos** (que decidem o ranking final) são fotos reais da Lua
-> com estatística bem diferente: predominância de baixa frequência (disco
-> lunar grande) com regiões pequenas de alta frequência (bordas de
-> cratera, terminator). Solver que se apoia em prior de textura natural
-> ou aprende parâmetros olhando só pro público pode sofrer.
+5 imagens de paisagem/aérea normalizadas para 512×512 grayscale. Originais
+em `reference/originals/` (gerado on-demand pelo script de geração, não
+commitado).
 
 | Slug | Imagem | Origem |
 |---|---|---|
-| `cameraman` | The Cameraman | MIT (via skimage.data) |
-| `mandrill` | Mandrill (Baboon) | USC-SIPI 4.2.03 |
-| `peppers` | Peppers | USC-SIPI 4.2.07 |
-| `airplane` | F-16 Airplane | USC-SIPI 4.2.05 |
+| `airplane` | F-16 Airplane (top-down) | USC-SIPI 4.2.05 |
 | `lake` | Sailboat on Lake | USC-SIPI 4.2.06 |
 | `boat` | Boat | USC-SIPI boat.512 |
 | `house` | House | USC-SIPI 4.1.05 (upscaled) |
-| `couple` | Couple | USC-SIPI 5.2.08 |
 | `stream` | Stream and bridge | USC-SIPI 5.2.10 |
 
-`inputs/<slug>.bmp` é o frame "saído da câmera" (borrado + ruidoso).
+`inputs/<slug>.bmp` é o frame "saído do drone" (borrado + ruidoso).
 `expected/<slug>.bmp` é o ground truth (a imagem nítida — você não tem
 isso na prática, é só pra validar localmente).
 
-> **Mandrill** é o caso público mais difícil: a textura fina dos pelos do
-> focinho gera ruído de alta frequência onde o seeing comeu o sinal mais
-> útil. Se não passar do threshold no mandrill, é onde começar a debugar.
-> (Mas atenção: a Lua não tem nada parecido com isso — a "dificuldade" do
-> caso final vem de outro lugar.)
+> **Stream** tende a ser o caso mais difícil: a textura fina da água e da
+> folhagem gera alta frequência onde o defocus comeu o sinal mais útil.
+> Se não passar do threshold em `stream`, é onde começar a debugar.
 
 ## Dataset oculto
 
-Os casos do benchmark final são **fotos reais da Lua** (cratera Tycho e
-arredores, alinhadas com a história lá em cima), no mesmo formato 512×512,
-processadas pelo mesmo modelo direto descrito acima, com σ sorteado da
-mesma faixa `[1.5, 3.5]`. Eles só são revelados quando o desafio encerra,
-mas você sabe desde já o que esperar:
-
-- Histograma deslocado pra escuro (espaço + disco parcialmente iluminado)
-- Muita área lisa, transições nítidas em poucas regiões (bordas de cratera)
-- Sem texturas de alta frequência tipo mandrill — a aposta é em recuperar
-  contraste local sem amplificar o ruído da câmera
+Os casos do benchmark final são **outras imagens de paisagem aérea do
+mesmo gênero** (mais fotos USC-SIPI das categorias *aerial* e *misc*, no
+mesmo formato 512×512, processadas pelo mesmo modelo direto descrito
+acima, com σ sorteado da mesma faixa `[1.5, 3.5]`). Estatística similar
+ao público — o set oculto não é uma pegadinha, é só *mais do mesmo*. Se
+sua solução vai bem nos 5 públicos, deve ir bem nos ocultos também.
 
 ## Como testar localmente
 
@@ -214,12 +193,12 @@ uv run python 2026-05-deblur/reference/generate.py
 
 # 2. Rodar a referência num caso e conferir o PSNR
 uv run python 2026-05-deblur/reference/wiener.py \
-    < 2026-05-deblur/inputs/cameraman.bmp \
-    > /tmp/cameraman_out.bmp
+    < 2026-05-deblur/inputs/house.bmp \
+    > /tmp/house_out.bmp
 
 uv run python 2026-05-deblur/reference/score.py \
-    /tmp/cameraman_out.bmp \
-    2026-05-deblur/expected/cameraman.bmp
+    /tmp/house_out.bmp \
+    2026-05-deblur/expected/house.bmp
 # → algo tipo "26.2221"
 ```
 
@@ -246,5 +225,4 @@ o conteúdo pela sua lógica.
 ## Atribuição
 
 Imagens de teste do **USC-SIPI** (University of Southern California, Signal
-and Image Processing Institute, "for research and educational use") e do
-**MIT** (Cameraman, via `skimage.data`).
+and Image Processing Institute, "for research and educational use").

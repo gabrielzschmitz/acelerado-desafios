@@ -1,6 +1,6 @@
 {
   "name": "deblur",
-  "title": "Astrofoto da Lua — desfocando o seeing",
+  "title": "Drone amador — desfocando o autofoco ruim",
   "month": "2026-05",
   "primary_metric": "psnr_mean_db",
   "direction": "max",

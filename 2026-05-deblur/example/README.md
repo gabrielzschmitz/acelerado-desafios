@@ -20,10 +20,10 @@ linguagens.
 ```bash
 docker build -t deblur-example example/python/
 docker run --rm --read-only --network=none -i deblur-example \
-    < inputs/cameraman.bmp > /tmp/out.bmp
+    < inputs/house.bmp > /tmp/out.bmp
 
 # checa que entrada e saída são iguais
-cmp inputs/cameraman.bmp /tmp/out.bmp && echo OK
+cmp inputs/house.bmp /tmp/out.bmp && echo OK
 ```
 
 Troque `python/` pela pasta da linguagem que você quiser usar.
