@@ -161,6 +161,14 @@ direções:
 grayscale. Originais em `reference/originals/` (gerado on-demand pelo
 script de geração, não commitado).
 
+> Reparou que **nenhuma** delas é uma foto da Lua? É proposital. Esse set
+> é pra desenvolvimento — variado, bem caracterizado, reproduzível. Os
+> **casos ocultos** (que decidem o ranking final) são fotos reais da Lua
+> com estatística bem diferente: predominância de baixa frequência (disco
+> lunar grande) com regiões pequenas de alta frequência (bordas de
+> cratera, terminator). Solver que se apoia em prior de textura natural
+> ou aprende parâmetros olhando só pro público pode sofrer.
+
 | Slug | Imagem | Origem |
 |---|---|---|
 | `cameraman` | The Cameraman | MIT (via skimage.data) |
@@ -177,12 +185,24 @@ script de geração, não commitado).
 `expected/<slug>.bmp` é o ground truth (a imagem nítida — você não tem
 isso na prática, é só pra validar localmente).
 
-> **Mandrill** é o caso mais difícil: a textura fina dos pelos do focinho
-> gera ruído de alta frequência onde o seeing comeu o sinal mais útil.
-> Se não passar do threshold no mandrill, é onde começar a debugar.
+> **Mandrill** é o caso público mais difícil: a textura fina dos pelos do
+> focinho gera ruído de alta frequência onde o seeing comeu o sinal mais
+> útil. Se não passar do threshold no mandrill, é onde começar a debugar.
+> (Mas atenção: a Lua não tem nada parecido com isso — a "dificuldade" do
+> caso final vem de outro lugar.)
 
-Existem **casos ocultos** adicionais que só são revelados quando o desafio
-encerra. Mesmo formato, mesmo modelo direto, σ sorteado da mesma faixa.
+## Dataset oculto
+
+Os casos do benchmark final são **fotos reais da Lua** (cratera Tycho e
+arredores, alinhadas com a história lá em cima), no mesmo formato 512×512,
+processadas pelo mesmo modelo direto descrito acima, com σ sorteado da
+mesma faixa `[1.5, 3.5]`. Eles só são revelados quando o desafio encerra,
+mas você sabe desde já o que esperar:
+
+- Histograma deslocado pra escuro (espaço + disco parcialmente iluminado)
+- Muita área lisa, transições nítidas em poucas regiões (bordas de cratera)
+- Sem texturas de alta frequência tipo mandrill — a aposta é em recuperar
+  contraste local sem amplificar o ruído da câmera
 
 ## Como testar localmente
 
