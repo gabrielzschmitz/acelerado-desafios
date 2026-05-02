@@ -13,7 +13,7 @@ linguagens.
 | C++     | [`cpp/`](cpp/)       | `gcc:13-slim` → `debian:bookworm-slim` | `g++ -O2` |
 | Rust    | [`rust/`](rust/)     | `rust:1.83-slim` → `debian:bookworm-slim` | `rustc -O` |
 | Go      | [`go/`](go/)         | `golang:1.23-bookworm` → `scratch` | `go build` (CGO=0) |
-| Zig     | [`zig/`](zig/)       | `debian:bookworm-slim` (+ Zig 0.13) | `zig build-exe -O ReleaseSafe` |
+| Zig     | [`zig/`](zig/)       | `debian:bookworm-slim` (+ Zig 0.15.1) | `zig build -Doptimize=ReleaseSafe` (via `build.zig`) |
 
 ## Rodar qualquer um
 
