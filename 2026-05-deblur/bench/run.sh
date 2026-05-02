@@ -39,7 +39,7 @@ IMAGE_TAG="acelerado-${SUB_NAME}:bench"
 docker build -q -t "$IMAGE_TAG" "$SUB_DIR" >/dev/null
 
 # Caps from spec.json.
-TIME_CAP_MS=$(jq -r '.caps.time_ms' "$SPEC")
+TIME_CAP_MS=$(jq -r '.caps.time_ms_per_image' "$SPEC")
 MEM_CAP_MB=$(jq -r '.caps.peak_rss_mb' "$SPEC")
 PSNR_MIN=$(jq -r '.validation.min_db' "$SPEC")
 WARMUP=$(jq -r '.bench.warmup_runs' "$SPEC")

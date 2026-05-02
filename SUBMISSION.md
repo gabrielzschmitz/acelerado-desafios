@@ -34,4 +34,4 @@ que serve de template.
 2. Branch `submissions/<seu-usuario>` (privacidade padrão) **ou**
    `solutions/<seu-usuario>` no `main` (público)
 3. PR contra o branch correspondente no upstream
-4. Aguarde a confirmação do bot
+4. Aguarde validação manual — sem CI por enquanto, eu confirmo no PR (pode levar alguns dias)

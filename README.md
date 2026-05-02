@@ -6,9 +6,13 @@ Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa a
 
 ## Como funciona
 
-1. **Dia 1**: o desafio do mês é publicado em `YYYY-MM-<nome>/`. O bot anuncia no Discord.
-2. **Durante o mês**: você desenvolve sua solução em `solutions/<seu-usuario>/` no formato descrito em [SUBMISSION.md](SUBMISSION.md). Submissões ficam em branches `submissions/<usuario>` (privadas até o fechamento) ou opcionalmente em `main` (públicas durante o mês — quem quer flexar antes do tempo).
-3. **Dia 1 do mês seguinte**: prazo encerra. O mantenedor roda o benchmark em hardware fixo, gera `results.json`, e o bot publica o post de resultados.
+1. **Dia 1**: o desafio do mês é publicado em `YYYY-MM-<nome>/` e anunciado no canal do **Waine - Dev do Desempenho** (YouTube/Discord).
+2. **Durante o mês**: você desenvolve sua solução em `<desafio>/solutions/<seu-usuario>/` no formato descrito em [SUBMISSION.md](SUBMISSION.md). Submissões ficam em branches `submissions/<usuario>` (privadas até o fechamento) ou opcionalmente em `main` (públicas durante o mês — pra quem quer flexar antes do tempo).
+3. **Dia 1 do mês seguinte**: prazo encerra. Eu rodo o benchmark localmente em hardware fixo, monto o ranking, e publico o resultado em vídeo no canal + post no Discord.
+
+> Nada disso é automatizado por enquanto — sem CI, sem bot. Validação e
+> ranking rodam na minha máquina. Se sua submissão tiver algum problema,
+> respondo no PR.
 
 ## Estrutura
 
@@ -41,7 +45,7 @@ Cada desafio declara **uma métrica primária** em `spec.json`. Pode ser:
 
 - Inputs ocultos só revelados após o fechamento
 - `--network=none` no container (sem chamadas remotas)
-- `--read-only` (sem escrever fora de `/tmp`)
+- `--read-only` no container — regras exatas de escrita em disco no README de cada desafio
 - Todas as submissões públicas após o fechamento → comunidade pode auditar
 
 ## Desafio atual
