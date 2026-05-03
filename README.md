@@ -1,20 +1,64 @@
 # acelerado-desafios
 
-Desafios mensais de performance da comunidade do canal **Waine - Dev do Desempenho**.
+Desafios mensais de performance da **Comunidade do Desempenho**.
 
-Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa a solução em **qualquer linguagem**, empacota num `Dockerfile`, abre um PR. No fim do mês as soluções são executadas em hardware fixo, o ranking é gerado e os resultados saem no Discord.
+Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa em **qualquer linguagem**, empacota num `Dockerfile`, abre um PR. No fim do mês as soluções são executadas em hardware fixo, o ranking é gerado e os resultados saem em vídeo no canal + post no Discord.
+
+## Desafios
+
+| Mês     | Desafio                                                       | Métrica  |
+|---------|---------------------------------------------------------------|----------|
+| 2026-05 | [Drone amador - desfocando o autofoco ruim](2026-05-deblur/)  | PSNR ↑   |
+
+> Novos desafios são adicionados dia 1º de cada mês.
+
+## Comunidade
+
+A discussão dos desafios rola no **Discord da Comunidade do Desempenho**:
+dúvidas, soluções, análises pós-fechamento e os anúncios oficiais dos
+problemas saem por lá. Quem participa dos rankings tá no servidor.
+
+**Entre:** [discord.gg/NNuzYsNPjV](https://discord.gg/NNuzYsNPjV)
+
+Outros canais:
+
+- **YouTube** - [@waine_jr](https://www.youtube.com/@waine_jr) (vídeos com explicações e retrospectivas)
+- **Site** - [wainejr.com](https://wainejr.com)
+- **GitHub** - [@wainejr](https://github.com/wainejr)
+- **Instagram** - [@waine_jr](https://www.instagram.com/waine_jr/)
+- **TikTok** - [@waine_jr](https://www.tiktok.com/@waine_jr)
 
 ## Como funciona
 
-1. **Dia 1**: o desafio do mês é publicado em `YYYY-MM-<nome>/` e anunciado no canal do **Waine - Dev do Desempenho** (YouTube/Discord).
-2. **Durante o mês**: você desenvolve sua solução em `<desafio>/solutions/<seu-usuario>/` no formato descrito em [SUBMISSION.md](SUBMISSION.md). Submissões ficam em branches `submissions/<usuario>` (privadas até o fechamento) ou opcionalmente em `main` (públicas durante o mês — pra quem quer flexar antes do tempo).
+1. **Dia 1**: o desafio do mês é publicado em `YYYY-MM-<nome>/` e anunciado nos canais da **Comunidade do Desempenho** (YouTube/Discord).
+2. **Durante o mês**: você desenvolve sua solução em `<desafio>/solutions/<seu-usuario>/` no formato descrito em [SUBMISSION.md](SUBMISSION.md). Submissões ficam em branches `submissions/<usuario>` (privadas até o fechamento) ou opcionalmente em `main` (públicas durante o mês - pra quem quer flexar antes do tempo).
 3. **Dia 1 do mês seguinte**: prazo encerra. Eu rodo o benchmark localmente em hardware fixo, monto o ranking, e publico o resultado em vídeo no canal + post no Discord.
 
-> Nada disso é automatizado por enquanto — sem CI, sem bot. Validação e
+> Nada disso é automatizado por enquanto - sem CI, sem bot. Validação e
 > ranking rodam na minha máquina. Se sua submissão tiver algum problema,
 > respondo no PR.
 
-## Estrutura
+## Métricas
+
+Cada desafio declara no próprio `README.md` e `spec.json`:
+
+- A **métrica primária** que define o ranking, junto com a direção (maximizar ou minimizar).
+- Os **caps duros** que desclassificam a submissão se estourados.
+- O **critério de validação** que a saída precisa atingir antes de entrar no ranking.
+
+A natureza dessas três coisas varia desafio a desafio - não tem regra global. Vale sempre o que está escrito no enunciado do mês.
+
+**Validação roda primeiro.** Se a saída não passa o critério do desafio, a submissão é desclassificada antes de qualquer pontuação.
+**Caps sempre se aplicam.** Estourar qualquer cap declarado pelo desafio também desclassifica.
+
+## Anti-cheat
+
+- Inputs ocultos só revelados após o fechamento
+- `--network=none` no container (sem chamadas remotas)
+- `--read-only` no container - regras exatas de escrita em disco no README de cada desafio
+- Todas as submissões públicas após o fechamento -> comunidade pode auditar
+
+## Estrutura do repo
 
 ```
 YYYY-MM-<nome>/
@@ -25,36 +69,6 @@ YYYY-MM-<nome>/
 ├── bench/run.sh         ← harness de benchmark
 └── reference/           ← implementação de referência + ferramentas
 ```
-
-## Métricas
-
-Cada desafio declara **uma métrica primária** em `spec.json`. Pode ser:
-
-- `time_ms` — tempo mediano de execução (via `hyperfine`)
-- `peak_rss_mb` — pico de memória residente
-- `disk_write_mb` — bytes escritos em disco
-- `binary_size_bytes` — tamanho do executável
-- `code_size_bytes` — tamanho do código-fonte (estilo code-golf)
-- `quality` — métrica específica do problema (PSNR, MSE, etc.)
-
-**Validação roda primeiro.** Se a saída não bate com a esperada (ou não atinge o threshold de qualidade), a submissão é desclassificada — sem score de performance.
-
-**Caps sempre se aplicam.** Estourar qualquer limite (`time_ms`, `peak_rss_mb`, etc.) também desclassifica.
-
-## Anti-cheat
-
-- Inputs ocultos só revelados após o fechamento
-- `--network=none` no container (sem chamadas remotas)
-- `--read-only` no container — regras exatas de escrita em disco no README de cada desafio
-- Todas as submissões públicas após o fechamento → comunidade pode auditar
-
-## Desafio atual
-
-→ [`2026-05-deblur/`](2026-05-deblur/) — Deconvolução de Wiener (deblur de imagem por FFT)
-
-## Histórico
-
-_(em breve)_
 
 ## Licença
 
