@@ -12,11 +12,14 @@ A imagem que você grava é, na prática, a **soma de todas essas pequenas manch
 Esse processo de "ponto da cena vira mancha no sensor" tem nome: **convolução**.
 A mancha em si - o formato como um único ponto se espalha - se chama **kernel**, ou **PSF** (point spread function, "função de espalhamento de ponto").
 No caso do drone do desafio, a PSF é aproximadamente uma gaussiana: uma manchinha redonda, mais densa no centro, esmaecendo nas bordas.
-A "largura" dessa gaussiana é o parâmetro `σ` (sigma) que aparece na spec - quanto maior σ, mais espalhada a mancha, mais borrada a imagem.
+A "largura" dessa gaussiana é o parâmetro `σ` (sigma) - quanto maior σ, mais espalhada a mancha, mais borrada a imagem.
+O σ varia entre frames e **não é divulgado**: sua solução precisa estimá-lo a partir da própria imagem que recebe, ou ser robusta a uma faixa de valores.
 
-| σ = 1.5 (autofoco quase certo) | σ = 2.5 (meio do range) | σ = 3.5 (autofoco perdido) |
+Visualmente, três níveis de borrão na mesma imagem:
+
+| σ pequeno (autofoco quase certo) | σ médio | σ grande (autofoco perdido) |
 |:---:|:---:|:---:|
-| ![sigma 1.5](docs/sigma_1_5.png) | ![sigma 2.5](docs/sigma_2_5.png) | ![sigma 3.5](docs/sigma_3_5.png) |
+| ![sigma pequeno](docs/sigma_1_5.png) | ![sigma médio](docs/sigma_2_5.png) | ![sigma grande](docs/sigma_3_5.png) |
 
 **Deconvolução** é o problema inverso: dada a imagem manchada (a foto borrada do drone), recuperar a imagem original (como se a câmera tivesse focado direito).
 Em palavras: "se eu sei mais ou menos o formato da manchinha que cada ponto virou, será que dá pra desfazer essa soma?"
@@ -91,9 +94,8 @@ A intuição:
 
 Calibrar lambda é parte da arte, e idealmente depende da intensidade do ruído e da intensidade do borrão.
 
-A referência que vem no repo ([`reference/wiener.py`](reference/wiener.py)) usa um `lambda` fixo + um kernel fixo (σ = 2.5, o ponto médio da faixa permitida).
-Esse é o **Wiener cego ingênuo**: ele não sabe qual é o σ verdadeiro do frame que recebeu, então chuta o meio.
-Funciona razoável quando o σ verdadeiro está perto de 2.5; sofre quando está nos extremos.
+A referência que vem no repo ([`reference/wiener.py`](reference/wiener.py)) usa um `lambda` e um kernel pré-escolhidos pelo mantenedor, sem nenhuma adaptação ao frame que recebe.
+Esse é o **Wiener cego ingênuo**: como ele não estima nada, quando os parâmetros reais do frame ficam perto desses chutes o resultado sai razoável; quando se distanciam, sofre.
 
 ## Por onde sua solução pode melhorar
 
@@ -101,7 +103,7 @@ A referência ignora pelo menos duas coisas que sua solução pode atacar:
 
 ### 1. Estimar o σ do frame
 
-O σ de cada frame está em algum lugar da faixa `[1.5, 3.5]`, mas o Wiener fixo trata todos como se fossem 2.5.
+O σ varia entre frames e não é divulgado, mas o Wiener da referência aplica o mesmo σ pra todo mundo.
 Se você consegue estimar o σ verdadeiro a partir da imagem borrada que recebeu, já melhora significativamente.
 Algumas técnicas clássicas:
 
@@ -124,8 +126,8 @@ Em 200 ms você não roda 50 iterações de Richardson-Lucy, mas 3 a 5 passos po
 ## Pra continuar
 
 - A spec completa do desafio está no [README](README.md).
-- O modelo direto - exatamente como cada frame de teste foi gerado - está documentado na seção "[Como o frame foi gerado](README.md#como-o-frame-foi-gerado)".
-  Sua solução **pode e deve** explorar esse conhecimento - não é "cego no escuro", é cego sabendo o processo de geração.
+- O modelo de geração do frame - a estrutura matemática do borrão e do ruído - está documentado na seção "[Como o frame foi gerado](README.md#como-o-frame-foi-gerado)".
+  Sua solução **pode e deve** explorar essa estrutura - mesmo que os parâmetros numéricos não sejam revelados, a forma do problema é conhecida.
 - O código de referência está em [`reference/wiener.py`](reference/wiener.py) - leitura curta, ~50 linhas de Python + numpy.
   Boa primeira leitura pra ver o pipeline FFT -> filtro -> IFFT acontecendo na prática.
 

@@ -94,7 +94,7 @@ A unidade é o **dB** (decibel), uma escala logarítmica - cada **+6 dB equivale
 Pra dar uma ideia da escala neste desafio especificamente:
 
 - **~21 dB**: a imagem borrada bruta, sem nenhum processamento, comparada com o original.
-- **~26 dB**: o que a referência ingênua (Wiener com σ fixo) consegue na média.
+- **~26 dB**: o que a referência ingênua (Wiener sem adaptação ao frame) consegue na média.
 - **~30 dB**: território de uma solução decente, que estima o σ do frame corretamente.
 - **~33 dB ou mais**: solução muito boa, combinando boa estimativa de σ com refinamento iterativo ou rede neural.
 
@@ -108,18 +108,21 @@ Desempate (em ordem):
 
 ## Como o frame foi gerado
 
-Sua solução pode (e deve) assumir que cada frame de teste foi produzido **exatamente** pelo processo abaixo:
+Cada frame que sua solução recebe foi produzido a partir de uma imagem nítida pelo modelo abaixo.
+A **estrutura** do modelo é conhecida (e sua solução pode e deve explorá-la), mas os **parâmetros numéricos** - a largura do borrão, a intensidade do ruído, e como variam entre frames - **não são divulgados**.
+Sua solução precisa ser robusta a essa variação, idealmente estimando os parâmetros a partir do próprio frame que recebe, como uma câmera real faria.
 
-1. Pega a imagem nítida `nitida` (uint8, 512x512 grayscale).
-2. Sorteia um nível de borrão `σ ∈ [1.5, 3.5]` uniformemente (semente determinística por imagem).
-   Esse σ controla a "largura" do desfoque - 1.5 é o autofoco quase acertando, 3.5 é o autofoco totalmente perdido.
-   Você **não sabe** o σ de cada frame.
-3. Aplica um borrão gaussiano periódico de largura σ via FFT: `borrada = IFFT( FFT(nitida) · FFT(kernel_σ) )`.
+Componentes do modelo, na ordem em que se aplicam:
+
+1. Parte de uma imagem nítida `nitida` (uint8, 512x512 grayscale).
+2. **Borrão gaussiano periódico** aplicado via FFT: `borrada = IFFT( FFT(nitida) · FFT(kernel_σ) )`.
    A convolução é **circular** - a borda da imagem se enrola, o frame é tratado como um toro 512x512.
-4. Soma um ruído branco gaussiano com `σ_n = 2.0` (no domínio 0-255).
-5. Clipa em `[0, 255]` e quantiza para `uint8` -> arquivo BMP.
+   A largura σ do kernel pode variar entre frames.
+3. **Ruído aditivo do sensor** somado em cada pixel.
+   A intensidade e o caráter do ruído podem variar entre frames.
+4. Clipa em `[0, 255]` e quantiza para `uint8` -> arquivo BMP.
 
-O kernel é construído como abaixo (numpy de referência; em outras linguagens, reproduzir o mesmo layout sob pena de errar a fase da deconvolução):
+O kernel gaussiano usado no passo 2 é construído como abaixo (numpy de referência; em outras linguagens, reproduzir o mesmo layout sob pena de errar a fase da deconvolução):
 
 ```python
 import numpy as np
@@ -138,10 +141,10 @@ Equivalente: kernel gaussiano centrado em `(0, 0)`, periodicidade implícita 512
 
 ## A referência
 
-Em [`reference/wiener.py`](reference/wiener.py) mora um solver **intencionalmente burro**: aplica o filtro de Wiener com σ fixo = 2.5 (o ponto médio da faixa) e regularização λ = 0.005 (calibrada pro nível de ruído).
-Quando o σ verdadeiro é próximo de 2.5 ele sai bem; quando é 1.5 ou 3.5, sofre - é a forma mais ingênua de atacar o problema "cego".
+Em [`reference/wiener.py`](reference/wiener.py) mora um solver **intencionalmente burro**: aplica o filtro de Wiener com parâmetros pré-escolhidos pelo mantenedor, sem nenhuma adaptação ao frame que recebe.
+É a forma mais ingênua de atacar o problema cego - quando os parâmetros reais do frame ficam perto dos chutes, o resultado sai razoável; quando se distanciam, sofre.
 
-A referência **não estima** σ.
+A referência **não estima** nada a partir do frame.
 Sua solução deve fazer melhor.
 Algumas direções:
 
@@ -170,7 +173,7 @@ Originais em `reference/originals/` (gerado on-demand pelo script de geração, 
 
 ## Dataset oculto
 
-Os casos do benchmark final são **outras imagens de paisagem aérea do mesmo gênero**, no mesmo formato 512x512 grayscale, processadas pelo mesmo modelo direto descrito acima e com σ sorteado da mesma faixa `[1.5, 3.5]`.
+Os casos do benchmark final são **outras imagens de paisagem aérea do mesmo gênero**, no mesmo formato 512x512 grayscale, processadas pelo mesmo modelo descrito acima (com parâmetros tirados da mesma fonte que o público).
 Estatística similar ao público - o set oculto não é uma pegadinha, é só *mais do mesmo*.
 Se sua solução vai bem nos 5 públicos, deve ir bem nos ocultos também.
 

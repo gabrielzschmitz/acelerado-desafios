@@ -31,12 +31,14 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).parent))
 import bmp_io  # noqa: E402
 
-SIGMA_MIN = 1.5
-SIGMA_MAX = 3.5
-NOISE_SIGMA = 2.0
+SIGMA_MIN = 0.0
+SIGMA_MAX = 20.0
+NOISE_SIGMA_MIN = 0.0
+NOISE_SIGMA_MAX = 20.0
 TARGET_SIZE = 512
 NOISE_RNG_SEED = 42
 SIGMA_RNG_SEED = 7
+NOISE_SIGMA_RNG_SEED = 13
 
 ROOT = Path(__file__).resolve().parents[1]  # 2026-05-deblur/
 ORIGINALS_DIR = Path(__file__).parent / "originals"
@@ -80,6 +82,9 @@ def normalize(arr: np.ndarray) -> np.ndarray:
 
 def gaussian_psf_freq(shape: tuple[int, int], sigma: float) -> np.ndarray:
     h, w = shape
+    if sigma <= 1e-6:
+        # Degenerate kernel: identity in frequency domain (no blur).
+        return np.ones(shape, dtype=complex)
     yy = np.fft.fftfreq(h) * h
     xx = np.fft.fftfreq(w) * w
     yy, xx = np.meshgrid(yy, xx, indexing="ij")
@@ -91,6 +96,11 @@ def gaussian_psf_freq(shape: tuple[int, int], sigma: float) -> np.ndarray:
 def draw_sigma(i: int) -> float:
     """Deterministic per-image sigma in [SIGMA_MIN, SIGMA_MAX]."""
     return float(np.random.default_rng(SIGMA_RNG_SEED + i).uniform(SIGMA_MIN, SIGMA_MAX))
+
+
+def draw_noise_sigma(i: int) -> float:
+    """Deterministic per-image noise sigma in [NOISE_SIGMA_MIN, NOISE_SIGMA_MAX]."""
+    return float(np.random.default_rng(NOISE_SIGMA_RNG_SEED + i).uniform(NOISE_SIGMA_MIN, NOISE_SIGMA_MAX))
 
 
 def blur_and_noise(sharp: np.ndarray, sigma: float, noise_sigma: float,
@@ -107,28 +117,31 @@ def main() -> int:
     EXPECTED_DIR.mkdir(parents=True, exist_ok=True)
     INPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    print(f"PSF sigma range: [{SIGMA_MIN}, {SIGMA_MAX}]   noise sigma: {NOISE_SIGMA}",
+    print(f"PSF sigma range: [{SIGMA_MIN}, {SIGMA_MAX}]   "
+          f"noise sigma range: [{NOISE_SIGMA_MIN}, {NOISE_SIGMA_MAX}]",
           file=sys.stderr)
     written = []
     failed = []
     for i, (slug, url) in enumerate(SOURCES):
         sigma = draw_sigma(i)
+        noise_sigma = draw_noise_sigma(i)
         try:
-            print(f"[{i+1}/{len(SOURCES)}] {slug}  sigma={sigma:.3f}", flush=True)
+            print(f"[{i+1}/{len(SOURCES)}] {slug}  sigma={sigma:.3f}  noise_sigma={noise_sigma:.3f}",
+                  flush=True)
             raw = fetch(slug, url)
             sharp = normalize(raw)
-            blurred = blur_and_noise(sharp, sigma, NOISE_SIGMA, NOISE_RNG_SEED + i)
+            blurred = blur_and_noise(sharp, sigma, noise_sigma, NOISE_RNG_SEED + i)
             bmp_io.write_path(EXPECTED_DIR / f"{slug}.bmp", sharp)
             bmp_io.write_path(INPUTS_DIR / f"{slug}.bmp", blurred)
-            written.append((slug, sigma))
+            written.append((slug, sigma, noise_sigma))
         except Exception as e:
             print(f"  ! {slug}: skipped ({e})", file=sys.stderr)
             failed.append((slug, str(e)))
 
     print()
     print(f"wrote {len(written)} cases:")
-    for slug, sigma in written:
-        print(f"  {slug:<12s}  sigma={sigma:.3f}")
+    for slug, sigma, noise_sigma in written:
+        print(f"  {slug:<12s}  sigma={sigma:.3f}  noise_sigma={noise_sigma:.3f}")
     if failed:
         print(f"failed {len(failed)}:")
         for slug, msg in failed:

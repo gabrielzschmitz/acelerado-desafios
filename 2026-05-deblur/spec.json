@@ -12,13 +12,11 @@
   },
   "psf": {
     "type": "gaussian",
-    "sigma_min": 1.5,
-    "sigma_max": 3.5,
-    "note": "blind: per-image sigma drawn uniformly from [sigma_min, sigma_max], not revealed"
+    "note": "per-frame sigma not disclosed; may vary between frames"
   },
   "noise": {
-    "type": "gaussian_white",
-    "sigma": 2.0
+    "type": "additive_sensor_noise",
+    "note": "per-frame intensity and character not disclosed; may vary between frames"
   },
   "validation": {
     "metric": "psnr",
