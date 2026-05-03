@@ -1,98 +1,90 @@
-# Maio 2026 — Drone amador: desfocando o autofoco ruim
+# Maio 2026 - Drone amador: desfocando o autofoco ruim
 
 ## O cenário
 
-Você comprou um drone amador FPV de menos de R$ 2 mil — câmera CMOS
-monocromática de 1.2 MP, lente plástica de baixo custo, **autofoco contínuo
-barato e sem gimbal de qualidade**. Sai numa tarde de domingo filmando a
-chácara dos pais: o lago atrás da casa, a ponte do riacho, o telhado novo.
-Em 90 segundos de voo, a câmera grava **3 mil frames** com exposição de 5 ms
-cada.
+Uma área que sempre puxou e guiou o desenvolvimento de software e de algoritmos é a fotografia.
+Desde que as câmeras surgiram - e principalmente depois da digitalização - programas de edição, melhoria e processamento viraram ferramenta de trabalho dos amadores aos profissionais.
+Se antes pra ter uma foto decente você precisava entender de exposição, iluminação e foco, hoje a câmera do seu celular toma várias dessas decisões editoriais por você pra deixar a foto mais instagramável.
 
-No software de processamento você descobre o que a comunidade já sabe:
-**a maior parte dos frames está borrada**. Não é vento e nem tremida — é o
-**autofoco do bagulho**.
+Só que essa luxúria assume hardware e algoritmo caros.
+Nem todo dispositivo tem acesso ao tipo de câmera que cabe num iPhone - drones amadores, por exemplo, precisam balancear o sistema de câmera com peso, controle, bateria e custo.
+O resultado é uma câmera CMOS monocromática barata, lente plástica, e **autofoco contínuo de baixo custo, sem gimbal de qualidade**.
+
+Consequência prática: em drone amador é comum que vários frames saiam borrados - e a causa de longe mais comum é o **autofoco**.
+A cada frame o sensor recalcula onde focar, e como o algoritmo é ruim ele **erra de forma diferente cada vez**: em algumas tomadas pega quase certo, em outras fica bem fora de foco.
+O efeito é um **borrão aproximadamente gaussiano** cuja intensidade depende de quanto o autofoco errou naquele frame específico.
+Em cima disso, o sensor (sem resfriamento, ganho médio) ainda joga um chiado fino de ruído eletrônico que aparece como granulação nas áreas escuras.
 
 | Frame que saiu do drone | Como a foto deveria ser |
 |:---:|:---:|
 | ![borrado](docs/house_inputs.png) | ![nítido](docs/house_expected.png) |
 
-A lente do drone tem autofoco contínuo: a cada frame o sensor recalcula
-onde focar, e como o algoritmo é ruim ele **erra de forma diferente cada
-vez**. Em algumas tomadas pega quase certo; em outras, fica bem fora de
-foco. O efeito é um **borrão aproximadamente gaussiano** cuja intensidade
-depende de quanto o autofoco errou naquele frame específico. Em cima disso,
-o sensor (sem resfriamento, ganho médio) ainda adiciona um chiado fino de
-ruído eletrônico que aparece como granulação nas áreas escuras das sombras.
-
 ## A tarefa
 
-Você quer recuperar a melhor estimativa possível da imagem nítida pra cada
-frame ruim. Concretamente:
-**dado um BMP borrado de 512×512, escrever um BMP do mesmo tamanho com a
-versão nítida estimada**.
+Você quer recuperar a melhor estimativa possível da imagem nítida pra cada frame ruim.
+E não offline no laptop depois do voo - **a bordo, em tempo real**, pra liberar o próximo frame da pipeline imediatamente.
+O alvo é processar a 5 fps no mínimo (uma imagem a cada 200 ms) rodando direto no SoC da própria câmera, que num drone dessa categoria tem na ordem de **64 MB de RAM disponível** pro processamento depois do resto do firmware.
+
+Concretamente: **dado um BMP borrado de 512x512, escrever um BMP do mesmo tamanho com a versão nítida estimada**, dentro do orçamento de 200 ms e 64 MB.
 
 O desafio é por **qualidade**: quem recupera mais detalhe (maior PSNR) ganha.
-O tempo de execução é cap duro — passou disso, desclassifica — mas acima do
-cap nada de mais vale. Detalhes na [Spec](#spec) abaixo.
+Os caps de tempo e memória são duros - estourou, desclassifica - mas abaixo deles tempo e memória extras não rendem nada, o que conta é o PSNR.
+Detalhes na [Spec](#spec) abaixo.
 
 ## Spec
 
 ### Formato de I/O
 
-- **Entrada (stdin)**: BMP 24-bit, **512×512**, sem compressão, grayscale
-  armazenado como R = G = B em cada pixel.
-  - 14 bytes `BITMAPFILEHEADER` + 40 bytes `BITMAPINFOHEADER` = 54 bytes
-    de cabeçalho, pixels começam no byte 54
+- **Entrada (stdin)**: BMP 24-bit, **512x512**, sem compressão, grayscale armazenado como R = G = B em cada pixel.
+  - 14 bytes `BITMAPFILEHEADER` + 40 bytes `BITMAPINFOHEADER` = 54 bytes de cabeçalho, pixels começam no byte 54
   - Linhas de baixo pra cima, BGR por pixel, sem padding (row stride 1536 B)
-- **Saída (stdout)**: BMP no exato mesmo formato e dimensões. Pixels fora
-  de `[0, 255]` devem ser clipados antes de escrever em `uint8`.
+- **Saída (stdout)**: BMP no exato mesmo formato e dimensões.
+  Pixels fora de `[0, 255]` devem ser clipados antes de escrever em `uint8`.
 
-Se você só quer ver o esqueleto da submissão rodando, em [`example/`](example/)
-moram Dockerfiles mínimos passthrough em **Python, JS, C, C++, Rust, Go e
-Zig** — escolhe a linguagem, copia, troca a lógica.
+Se você só quer ver o esqueleto da submissão rodando, em [`example/`](example/) moram Dockerfiles mínimos passthrough em **Python, JS, C, C++, Rust, Go e Zig** - escolhe a linguagem, copia, troca a lógica.
 
 ### Como o harness roda sua solução
 
 ```bash
 docker run --rm \
   --cpuset-cpus=2,3 --cpus=2 \
-  --memory=1g \
+  --memory=64m \
   --network=none --read-only \
   -i <sua-imagem> < inputs/<caso>.bmp > out.bmp
 ```
 
-Sua solução **não pode escrever em nenhum arquivo**. Apenas stdin de leitura,
-stdout/stderr de escrita, e RAM. Tentar escrever em qualquer lugar (incluindo
-`/tmp`, `~/.cache`, `/var/log`) falha com `EROFS`.
+Sua solução **não pode escrever em nenhum arquivo**.
+Apenas stdin de leitura, stdout/stderr de escrita, e RAM.
+Tentar escrever em qualquer lugar (incluindo `/tmp`, `~/.cache`, `/var/log`) falha com `EROFS`.
 
 Dicas pra não bater nessa parede:
 
-- **Python**: rode com `python -B` (ou `PYTHONDONTWRITEBYTECODE=1`) pra não
-  tentar escrever `.pyc`. Bibliotecas que cacheiam em `~/.cache` (matplotlib,
-  numba JIT, etc.) podem falhar — pré-construa os caches no `Dockerfile`,
-  não em runtime, ou use só `numpy` puro.
-- **C/C++ com FFTW**: `fftw_wisdom` por default escreve em arquivo. Use
-  apenas o wisdom embutido no binário ou desligue persistência.
+- **Python**: rode com `python -B` (ou `PYTHONDONTWRITEBYTECODE=1`) pra não tentar escrever `.pyc`.
+  Bibliotecas que cacheiam em `~/.cache` (matplotlib, numba JIT, etc.) podem falhar - pré-construa os caches no `Dockerfile`, não em runtime, ou use só `numpy` puro.
+- **C/C++ com FFTW**: `fftw_wisdom` por default escreve em arquivo.
+  Use apenas o wisdom embutido no binário ou desligue persistência.
 - **GPU**: indisponível no bench (não tem GPU no host).
 
 ### Validação (caps duros)
 
 Estourar qualquer um destes desclassifica a submissão:
 
-- **PSNR ≥ 21 dB** contra `expected/<caso>.bmp` em **todos** os casos
-  (públicos + ocultos), com `PSNR = 10 · log₁₀(255² / MSE)`.
-- **Tempo ≤ 2 000 ms por imagem** (mediana de 5 runs medidos por
-  `hyperfine`, +1 warmup). Esse cap é apertado de propósito — Python +
-  numpy FFT cabe folgado, mas não dá pra rodar 50 iterações de
-  Richardson-Lucy nem inferência de rede pesada.
-- `peak_rss_mb ≤ 1024` (1 GB de RSS).
+- **PSNR ≥ 21 dB** contra `expected/<caso>.bmp` em **todos** os casos (públicos + ocultos), com `PSNR = 10 · log₁₀(255² / MSE)`.
+- **Tempo ≤ 200 ms por imagem** (mediana de 5 runs medidos por `hyperfine`, +1 warmup), correspondente aos 5 fps mínimos do alvo embarcado.
+- **`peak_rss_mb ≤ 64`** (RAM equivalente ao SoC de câmera do drone alvo).
+
+Os dois caps são apertados de propósito - eles refletem o orçamento real do hardware embarcado, não folga arbitrária do harness.
+Implicações práticas:
+
+- Solução baseada em rede neural treinada precisa caber no runtime: PyTorch e TensorFlow não cabem nem como runtime (ambos passam de 200 MB).
+  Inferência tem que ser via runtime leve (ggml, ncnn, ONNX Runtime mínimo) ou implementação manual.
+- Python + numpy puro cabe nos dois caps, mas sem folga: o interpretador + numpy ficam em ~50 MB depois do `import`, e o overhead do Python pesa contra os 200 ms.
+- Compilados (C, C++, Rust, Zig, Go) têm overhead de runtime na casa de 1-5 MB e dão folga grande nos dois eixos.
 
 ### Ranking
 
-Quem **maximiza o PSNR médio** sobre todos os casos (públicos + ocultos)
-ganha. Acima do cap de tempo o tempo não importa — gaste os 2 segundos se
-isso te der mais qualidade.
+Quem **maximiza o PSNR médio** sobre todos os casos (públicos + ocultos) ganha.
+Acima do cap de tempo o tempo não importa - gaste os 200 ms inteiros se isso te der mais qualidade.
 
 Desempate (em ordem):
 1. Mediana de PSNR (caso o médio empate, vence quem é mais consistente)
@@ -101,23 +93,18 @@ Desempate (em ordem):
 
 ## Como o frame foi gerado
 
-Sua solução pode (e deve) assumir que cada frame de teste foi produzido
-**exatamente** pelo processo abaixo:
+Sua solução pode (e deve) assumir que cada frame de teste foi produzido **exatamente** pelo processo abaixo:
 
-1. Pega a imagem nítida `nitida` (uint8, 512×512 grayscale).
-2. Sorteia um nível de borrão `σ ∈ [1.5, 3.5]` uniformemente (semente
-   determinística por imagem). Esse σ controla a "largura" do desfoque —
-   1.5 é o autofoco quase acertando, 3.5 é o autofoco totalmente perdido.
+1. Pega a imagem nítida `nitida` (uint8, 512x512 grayscale).
+2. Sorteia um nível de borrão `σ ∈ [1.5, 3.5]` uniformemente (semente determinística por imagem).
+   Esse σ controla a "largura" do desfoque - 1.5 é o autofoco quase acertando, 3.5 é o autofoco totalmente perdido.
    Você **não sabe** o σ de cada frame.
-3. Aplica um borrão gaussiano periódico de largura σ via FFT:
-   `borrada = IFFT( FFT(nitida) · FFT(kernel_σ) )`. A convolução é
-   **circular** — a borda da imagem se enrola, o frame é tratado como um
-   toro 512×512.
-4. Soma um ruído branco gaussiano com `σ_n = 2.0` (no domínio 0–255).
-5. Clipa em `[0, 255]` e quantiza para `uint8` → arquivo BMP.
+3. Aplica um borrão gaussiano periódico de largura σ via FFT: `borrada = IFFT( FFT(nitida) · FFT(kernel_σ) )`.
+   A convolução é **circular** - a borda da imagem se enrola, o frame é tratado como um toro 512x512.
+4. Soma um ruído branco gaussiano com `σ_n = 2.0` (no domínio 0-255).
+5. Clipa em `[0, 255]` e quantiza para `uint8` -> arquivo BMP.
 
-O kernel é construído como abaixo (numpy de referência; em outras linguagens,
-reproduzir o mesmo layout sob pena de errar a fase da deconvolução):
+O kernel é construído como abaixo (numpy de referência; em outras linguagens, reproduzir o mesmo layout sob pena de errar a fase da deconvolução):
 
 ```python
 import numpy as np
@@ -132,31 +119,25 @@ def gaussian_psf_freq(shape, sigma):
     return np.fft.fft2(psf)
 ```
 
-Equivalente: kernel gaussiano centrado em `(0, 0)`, periodicidade implícita
-512, normalizado pra somar 1 no domínio espacial.
+Equivalente: kernel gaussiano centrado em `(0, 0)`, periodicidade implícita 512, normalizado pra somar 1 no domínio espacial.
 
 ## A referência
 
-Em [`reference/wiener.py`](reference/wiener.py) mora um solver
-**intencionalmente burro**: aplica o filtro de Wiener com σ fixo = 2.5 (o
-ponto médio da faixa) e regularização λ = 0.005 (calibrada pro nível de
-ruído). Quando o σ verdadeiro é próximo de 2.5 ele sai bem; quando é 1.5
-ou 3.5, sofre — é a forma mais ingênua de atacar o problema "cego".
+Em [`reference/wiener.py`](reference/wiener.py) mora um solver **intencionalmente burro**: aplica o filtro de Wiener com σ fixo = 2.5 (o ponto médio da faixa) e regularização λ = 0.005 (calibrada pro nível de ruído).
+Quando o σ verdadeiro é próximo de 2.5 ele sai bem; quando é 1.5 ou 3.5, sofre - é a forma mais ingênua de atacar o problema "cego".
 
-A referência **não estima** σ. Sua solução deve fazer melhor. Algumas
-direções:
+A referência **não estima** σ.
+Sua solução deve fazer melhor.
+Algumas direções:
 
-- **Estimar σ a partir do espectro de potência** (técnica clássica:
-  `log P(f) ≈ -2π²σ²f² - α log(f) + c`, ajusta linear)
-- **Sweep paralelo** sobre alguns σ candidatos + escolha por métrica de
-  foco (variância do laplaciano, total variation, gradient sparsity)
+- **Estimar σ a partir do espectro de potência** (técnica clássica: `log P(f) ≈ -2π²σ²f² - α log(f) + c`, ajusta linear)
+- **Sweep paralelo** sobre alguns σ candidatos + escolha por métrica de foco (variância do laplaciano, total variation, gradient sparsity)
 - **Métodos iterativos** (Richardson-Lucy, TV-regularizado)
 
 ## Dataset público
 
-5 imagens de paisagem/aérea normalizadas para 512×512 grayscale. Originais
-em `reference/originals/` (gerado on-demand pelo script de geração, não
-commitado).
+5 imagens de paisagem/aérea normalizadas para 512x512 grayscale.
+Originais em `reference/originals/` (gerado on-demand pelo script de geração, não commitado).
 
 | Slug | Imagem | Origem |
 |---|---|---|
@@ -167,39 +148,41 @@ commitado).
 | `stream` | Stream and bridge | USC-SIPI 5.2.10 |
 
 `inputs/<slug>.bmp` é o frame "saído do drone" (borrado + ruidoso).
-`expected/<slug>.bmp` é o ground truth (a imagem nítida — você não tem
-isso na prática, é só pra validar localmente).
+`expected/<slug>.bmp` é o ground truth (a imagem nítida - você não tem isso na prática, é só pra validar localmente).
 
-> **Stream** tende a ser o caso mais difícil: a textura fina da água e da
-> folhagem gera alta frequência onde o defocus comeu o sinal mais útil.
+> **Stream** tende a ser o caso mais difícil: a textura fina da água e da folhagem gera alta frequência onde o defocus comeu o sinal mais útil.
 > Se não passar do threshold em `stream`, é onde começar a debugar.
 
 ## Dataset oculto
 
-Os casos do benchmark final são **outras imagens de paisagem aérea do
-mesmo gênero** (mais fotos USC-SIPI das categorias *aerial* e *misc*, no
-mesmo formato 512×512, processadas pelo mesmo modelo direto descrito
-acima, com σ sorteado da mesma faixa `[1.5, 3.5]`). Estatística similar
-ao público — o set oculto não é uma pegadinha, é só *mais do mesmo*. Se
-sua solução vai bem nos 5 públicos, deve ir bem nos ocultos também.
+Os casos do benchmark final são **outras imagens de paisagem aérea do mesmo gênero** (mais fotos USC-SIPI das categorias *aerial* e *misc*, no mesmo formato 512x512, processadas pelo mesmo modelo direto descrito acima, com σ sorteado da mesma faixa `[1.5, 3.5]`).
+Estatística similar ao público - o set oculto não é uma pegadinha, é só *mais do mesmo*.
+Se sua solução vai bem nos 5 públicos, deve ir bem nos ocultos também.
 
 ## Como testar localmente
 
 Pré-requisitos: `uv` (Python 3.11+), `docker`, `hyperfine`, `jq`.
 
 ```bash
-# 1. Gerar o dataset (cache em reference/originals/, faz a parte de rede uma vez)
-uv run python 2026-05-deblur/reference/generate.py
+# 0. Resolver as deps da referência (numpy só; +pillow/requests com --extra generate)
+uv sync --project 2026-05-deblur/reference
 
-# 2. Rodar a referência num caso e conferir o PSNR
-uv run python 2026-05-deblur/reference/wiener.py \
+# 1. Rodar a referência num caso e conferir o PSNR
+uv run --project 2026-05-deblur/reference \
+    python 2026-05-deblur/reference/wiener.py \
     < 2026-05-deblur/inputs/house.bmp \
     > /tmp/house_out.bmp
 
-uv run python 2026-05-deblur/reference/score.py \
+uv run --project 2026-05-deblur/reference \
+    python 2026-05-deblur/reference/score.py \
     /tmp/house_out.bmp \
     2026-05-deblur/expected/house.bmp
 # → algo tipo "26.2221"
+
+# 2. (Opcional) Regenerar o dataset (precisa do extra generate)
+uv sync --project 2026-05-deblur/reference --extra generate
+uv run --project 2026-05-deblur/reference \
+    python 2026-05-deblur/reference/generate.py
 ```
 
 Pra rodar o bench harness contra a referência (precisa de `docker`):
@@ -211,18 +194,15 @@ docker build -t acelerado-ref:bench 2026-05-deblur/reference/
 
 ## Como submeter
 
-Estrutura, `meta.json` e fluxo de PR ficam no [`../SUBMISSION.md`](../SUBMISSION.md)
-genérico. Pra esse desafio especificamente:
+Estrutura, `meta.json` e fluxo de PR ficam no [`../SUBMISSION.md`](../SUBMISSION.md) genérico.
+Pra esse desafio especificamente:
 
 1. `2026-05-deblur/solutions/<seu-usuario>/Dockerfile` constrói sua solução
 2. Container lê BMP de stdin, escreve BMP em stdout (contrato acima)
 3. PR contra a branch `submissions/<seu-usuario>` ou `main` (público)
 
-Se quiser um ponto de partida que já compila e roda sem fazer nada útil,
-copie a subpasta da linguagem desejada de [`example/`](example/) e substitua
-o conteúdo pela sua lógica.
+Se quiser um ponto de partida que já compila e roda sem fazer nada útil, copie a subpasta da linguagem desejada de [`example/`](example/) e substitua o conteúdo pela sua lógica.
 
 ## Atribuição
 
-Imagens de teste do **USC-SIPI** (University of Southern California, Signal
-and Image Processing Institute, "for research and educational use").
+Imagens de teste do **USC-SIPI** (University of Southern California, Signal and Image Processing Institute, "for research and educational use").
