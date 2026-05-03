@@ -32,10 +32,6 @@ function prettyMetric(name: string): string {
 }
 
 const arrow = direction === 'max' ? '↑' : direction === 'min' ? '↓' : '';
-// Tiny ASCII sparkline indicating direction (rising for max, falling for min).
-const sparkline = direction === 'max'
-  ? '▁▂▃▅▇'
-  : direction === 'min' ? '▇▅▃▂▁' : '─────';
 
 const Tag = placeholder ? 'div' : 'a';
 const tagProps = placeholder ? {} : { href };
@@ -52,20 +48,14 @@ const tagProps = placeholder ? {} : { href };
   <div class="challenge-title">{title}</div>
 
   {!placeholder && primaryMetric && (
-    <div class="challenge-metric-row">
-      <div class="challenge-metric">
-        <span class="challenge-metric-key">métrica</span>
-        <span class="challenge-metric-val">{prettyMetric(primaryMetric)} {arrow}</span>
-      </div>
-      <div class="challenge-spark" aria-hidden="true">{sparkline}</div>
+    <div class="challenge-metric">
+      <span class="challenge-metric-key">métrica</span>
+      <span class="challenge-metric-val">{prettyMetric(primaryMetric)} {arrow}</span>
     </div>
   )}
 
   {placeholder && (
-    <div class="challenge-placeholder-text">
-      <span class="challenge-placeholder-cursor" aria-hidden="true"></span>
-      aguardando publicação
-    </div>
+    <div class="challenge-placeholder-text">aguardando publicação</div>
   )}
 
   {!placeholder && (

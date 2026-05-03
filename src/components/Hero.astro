@@ -1,7 +1,6 @@
 ---
 import challenges from '../data/challenges.json';
 
-// Compute "next month" dynamically (1st of next month, ISO date).
 function nextMonthIso(): string {
   const now = new Date();
   const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
@@ -11,18 +10,16 @@ function nextMonthIso(): string {
 const stats = {
   publicados: challenges.length,
   proximo:    nextMonthIso(),
-  hardware:   'fixo · 2 vCPU · 1 GB',
 };
 ---
 
-<section class="hero-block" data-reveal>
-  {/* fake terminal "title bar" — left label, right status pills */}
+<section class="hero-block" data-reveal data-quiet-prose>
+  {/* fake terminal "title bar" — left label, right status pill */}
   <header class="hero-titlebar">
     <span class="hero-titlebar-label">~/acelerado-desafios</span>
     <span class="hero-titlebar-pills">
       <span class="hero-pill is-live"><span class="hero-dot"></span>live</span>
       <span class="hero-pill"><span class="hero-pill-k">próximo</span><span class="hero-pill-v">{stats.proximo}</span></span>
-      <span class="hero-pill"><span class="hero-pill-k">ranking</span><span class="hero-pill-v">aberto</span></span>
     </span>
   </header>
 
@@ -36,7 +33,7 @@ const stats = {
     </h1>
 
     <p class="hero-tagline" data-reveal-item>
-      Um problema novo todo dia 1º. Qualquer linguagem. Hardware fixo. Ranking aberto.<span class="hero-cursor"></span>
+      Um problema novo todo dia 1º. Qualquer linguagem. Métrica, caps e validação definidos por desafio.<span class="hero-cursor"></span>
     </p>
 
     <dl class="hero-meta" data-reveal-item>
@@ -45,16 +42,16 @@ const stats = {
         <dd class="hero-v">mensal</dd>
       </div>
       <div class="hero-kv">
-        <dt class="hero-k">HARDWARE</dt>
-        <dd class="hero-v">{stats.hardware}</dd>
-      </div>
-      <div class="hero-kv">
         <dt class="hero-k">PUBLICADOS</dt>
         <dd class="hero-v">{String(stats.publicados).padStart(3, '0')}</dd>
       </div>
       <div class="hero-kv">
-        <dt class="hero-k">RUNTIME</dt>
-        <dd class="hero-v">docker · stdin/stdout · readonly</dd>
+        <dt class="hero-k">SUBMISSÃO</dt>
+        <dd class="hero-v">docker + PR</dd>
+      </div>
+      <div class="hero-kv">
+        <dt class="hero-k">REGRAS</dt>
+        <dd class="hero-v">por desafio</dd>
       </div>
     </dl>
   </div>

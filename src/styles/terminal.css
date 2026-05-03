@@ -524,11 +524,6 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: none; }
 }
 
-/* keyframes shared with the Discord CTA's left-edge pulse */
-@keyframes term-pulse-line {
-  0%, 100% { opacity: 0.55; }
-  50%      { opacity: 1; }
-}
 
 /* ---- Challenge cards ---- */
 .challenge-grid {
@@ -571,20 +566,16 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   color: var(--term-fg-muted);
 }
-.challenge-month::before { content: '> '; color: var(--term-lime); }
-
 .challenge-status {
   display: inline-flex;
   align-items: center;
-  gap: 0.4em;
+  gap: 0.45em;
   font-family: var(--sl-font-mono);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--term-fg-muted);
 }
-.challenge-status::before { content: '['; color: var(--term-fg-dim); padding-right: 0.2em; }
-.challenge-status::after  { content: ']'; color: var(--term-fg-dim); padding-left: 0.2em; }
 .challenge-status-dot {
   width: 6px;
   height: 6px;
@@ -592,17 +583,11 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--term-fg-muted);
   display: inline-block;
 }
-.challenge-status--aberto      { color: var(--term-lime); }
-.challenge-status--aberto .challenge-status-dot {
-  background: var(--term-lime);
-  box-shadow: 0 0 6px var(--term-lime-glow);
-}
-.challenge-status--fechado     { color: var(--term-fg-dim); }
-.challenge-status--aguardando  { color: var(--term-amber); }
-.challenge-status--aguardando .challenge-status-dot {
-  background: var(--term-amber);
-  animation: term-pulse 2.4s ease-in-out infinite;
-}
+.challenge-status--aberto { color: var(--term-lime); }
+.challenge-status--aberto .challenge-status-dot { background: var(--term-lime); }
+.challenge-status--fechado { color: var(--term-fg-dim); }
+.challenge-status--aguardando { color: var(--term-amber); }
+.challenge-status--aguardando .challenge-status-dot { background: var(--term-amber); }
 
 .challenge-title {
   font-family: var(--sl-font-mono);
@@ -614,31 +599,22 @@ h1, h2, h3, h4, h5, h6 {
   transition: color 140ms ease;
 }
 
-.challenge-metric-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: auto;
-}
 .challenge-metric {
+  margin-top: auto;
   font-family: var(--sl-font-mono);
   font-size: 12px;
   color: var(--term-fg-muted);
   display: inline-flex;
   align-items: baseline;
-  gap: 0.4em;
+  gap: 0.55em;
 }
-.challenge-metric-key { color: var(--term-fg-dim); }
-.challenge-metric-key::before { content: '['; padding-right: 0.15em; }
-.challenge-metric-key::after  { content: ']'; padding-left: 0.15em; }
-.challenge-metric-val { color: var(--term-cyan); }
-.challenge-spark {
-  font-family: var(--sl-font-mono);
-  font-size: 14px;
-  color: var(--term-lime);
-  letter-spacing: 0.08em;
+.challenge-metric-key {
+  color: var(--term-fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
 }
+.challenge-metric-val { color: var(--sl-color-gray-1); }
 
 .challenge-arrow {
   position: absolute;
@@ -671,17 +647,6 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 12px;
   color: var(--term-fg-dim);
   letter-spacing: 0.04em;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-}
-.challenge-placeholder-cursor {
-  display: inline-block;
-  width: 0.5em;
-  height: 0.95em;
-  background: var(--term-amber);
-  vertical-align: -0.1em;
-  animation: term-blink 1.05s steps(1, end) infinite;
 }
 
 /* When the only-child case (1 real card + 1 placeholder = 2),
@@ -733,162 +698,69 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- Discord CTA ---- */
 .discord-cta {
-  position: relative;
   margin: clamp(1.75rem, 4vw, 2.5rem) 0;
-  padding: 0;
+  padding: clamp(1.4rem, 3vw, 1.85rem) clamp(1.25rem, 3vw, 1.75rem);
   background: var(--term-bg-elev);
   border: 1px solid var(--term-line-strong);
-  overflow: hidden;
-  isolation: isolate;
-}
-.discord-cta-grid {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(124, 255, 90, 0.08) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 0 0;
-  mask-image: linear-gradient(115deg, rgba(0,0,0,0.6) 0%, transparent 60%);
-  pointer-events: none;
-}
-.discord-cta::after {
-  /* lime "live" edge along the left */
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--term-lime);
-  box-shadow: 0 0 14px var(--term-lime-glow);
-  animation: term-pulse-line 2.6s ease-in-out infinite;
-  z-index: 1;
-}
-
-.discord-cta-titlebar {
-  position: relative;
-  z-index: 2;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.55rem 1rem 0.55rem 1.25rem;
-  border-bottom: 1px solid var(--term-line);
-  background: var(--term-bg-elev-2);
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.discord-cta-eyebrow {
+  margin: 0;
   font-family: var(--sl-font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--term-fg-muted);
 }
-.discord-cta-titlebar-label::before { content: '┌─ '; color: var(--term-lime); }
-.discord-cta-titlebar-pulse {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  color: var(--term-lime);
-}
-.discord-cta-pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--term-lime);
-  box-shadow: 0 0 8px var(--term-lime-glow);
-  animation: term-pulse 2.4s ease-in-out infinite;
-}
-
-.discord-cta-inner {
-  position: relative;
-  z-index: 2;
-  padding: 1.5rem clamp(1.25rem, 3vw, 2rem) 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-.discord-cta-prompt {
-  font-family: var(--sl-font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--term-fg-muted);
-}
-.discord-cta-sigil { color: var(--term-lime); padding-right: 0.5em; }
 .discord-cta-title {
   font-family: var(--sl-font-mono);
   font-weight: 700;
-  font-size: clamp(1.45rem, 3vw, 1.95rem);
-  line-height: 1.15;
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  line-height: 1.2;
   margin: 0;
   color: var(--sl-color-white);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   border: 0;
   padding: 0;
   display: block;
 }
 .discord-cta-title::before { content: none !important; }
-.discord-cta-bracket {
-  color: var(--term-lime);
-  font-weight: 400;
-  padding: 0 0.1em;
-  text-shadow: 0 0 14px var(--term-lime-glow);
-}
 .discord-cta-tagline {
   margin: 0;
   font-family: var(--sl-font);
   font-size: 0.98rem;
   line-height: 1.55;
   color: var(--sl-color-gray-1);
-  max-width: 56ch;
+  max-width: 60ch;
 }
-
-.discord-cta-button {
+.discord-cta-link {
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  font-family: var(--sl-font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--term-lime) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid rgba(124, 255, 90, 0.45) !important;
   display: inline-flex;
   align-items: baseline;
-  gap: 0.65rem;
-  align-self: flex-start;
-  margin-top: 0.5rem;
-  padding: 0.95rem 1.4rem;
-  font-family: var(--sl-font-mono);
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none !important;
-  color: #000 !important;
-  background: var(--term-lime);
-  border: 0 !important;
-  border-radius: 0;
-  letter-spacing: 0.02em;
-  position: relative;
-  transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
-              box-shadow 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
-              background 120ms ease;
-  /* "tactile" stacked shadow that gets crushed on click */
-  box-shadow:
-    0 0 0 1px rgba(124, 255, 90, 0.4),
-    0 6px 0 -2px rgba(124, 255, 90, 0.18),
-    0 14px 28px -10px rgba(124, 255, 90, 0.35);
+  gap: 0.65em;
+  background: transparent !important;
+  padding: 0 0 0.15rem !important;
 }
-.discord-cta-button:hover,
-.discord-cta-button:focus-visible {
-  background: #aef5b8;
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 0 1px rgba(124, 255, 90, 0.5),
-    0 10px 0 -2px rgba(124, 255, 90, 0.18),
-    0 22px 36px -10px rgba(124, 255, 90, 0.45);
+.discord-cta-link:hover,
+.discord-cta-link:focus-visible {
+  border-bottom-color: var(--term-lime) !important;
+  background: transparent !important;
 }
-.discord-cta-button:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 0 0 1px rgba(124, 255, 90, 0.5),
-    0 2px 0 -2px rgba(124, 255, 90, 0.18),
-    0 4px 14px -4px rgba(124, 255, 90, 0.35);
-}
-.discord-cta-button-arrow { color: #000; font-weight: 700; }
-.discord-cta-button-host {
-  font-family: var(--sl-font-mono);
+.discord-cta-link-host {
   font-weight: 400;
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
-  color: rgba(0, 0, 0, 0.7);
-  padding-left: 0.4rem;
-  border-left: 1px solid rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  color: var(--term-fg-dim);
+  letter-spacing: 0.02em;
 }
 
 /* ---- Custom footer ---- */
@@ -1028,10 +900,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   challenge problem pages - minimalist reading mode
-   Scoped via body:has([data-challenge-page]). The landing and
-   sidebar keep the terminal/dashboard treatment; problem pages
-   strip ornament so the prose carries the page.
+   minimalist reading mode
+   Scoped via body:has([data-quiet-prose]). Applies to challenge
+   problem pages (PageTitle override emits the marker for any
+   /desafios/* slug) and to the landing (the Hero carries it).
+   The sidebar keeps the terminal/dashboard treatment - it's nav,
+   not reading content - and the Hero itself stays as the brand
+   surface. Everything below the Hero gets the quiet treatment.
    ============================================================ */
 
 /* Quiet meta line that replaces the boxed metric-strip widget.
@@ -1074,28 +949,28 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Drop the body grid + scanlines on challenge pages - they read
    as texture for a dashboard, not as a comfortable reading surface. */
-body:has([data-challenge-page]) {
+body:has([data-quiet-prose]) {
   background-image: none;
 }
 
 /* Headings: drop the ##/###/#### prefix sigils and the flex layout
    that came with them. Keep a single hairline under h2 for hierarchy. */
-body:has([data-challenge-page]) .sl-markdown-content h2 {
+body:has([data-quiet-prose]) .sl-markdown-content h2 {
   display: block;
   border-bottom: 1px solid var(--term-line);
   padding-bottom: 0.45rem;
   margin-top: 2.6rem;
 }
-body:has([data-challenge-page]) .sl-markdown-content h3 {
+body:has([data-quiet-prose]) .sl-markdown-content h3 {
   display: block;
   margin-top: 1.85rem;
 }
-body:has([data-challenge-page]) .sl-markdown-content h2::before,
-body:has([data-challenge-page]) .sl-markdown-content h3::before,
-body:has([data-challenge-page]) .sl-markdown-content h4::before {
+body:has([data-quiet-prose]) .sl-markdown-content h2::before,
+body:has([data-quiet-prose]) .sl-markdown-content h3::before,
+body:has([data-quiet-prose]) .sl-markdown-content h4::before {
   content: none;
 }
-body:has([data-challenge-page]) .sl-markdown-content h4 {
+body:has([data-quiet-prose]) .sl-markdown-content h4 {
   text-transform: none;
   letter-spacing: -0.005em;
   color: var(--sl-color-white);
@@ -1104,28 +979,28 @@ body:has([data-challenge-page]) .sl-markdown-content h4 {
 
 /* Italic emphasis: drop the cyan, keep a real italic. The cyan
    reads as a UI badge mid-sentence and yanks the eye. */
-body:has([data-challenge-page]) .sl-markdown-content em {
+body:has([data-quiet-prose]) .sl-markdown-content em {
   color: inherit;
   font-style: italic;
 }
 
 /* Inline code: neutral ink on a quiet panel. Lime stays reserved
    for links and the meta-line arrow. */
-body:has([data-challenge-page]) .sl-markdown-content :not(pre) > code {
+body:has([data-quiet-prose]) .sl-markdown-content :not(pre) > code {
   color: var(--sl-color-gray-1);
   background: var(--term-bg-elev);
   border: 1px solid var(--term-line);
 }
 
 /* Lists: thin en-dash marker instead of the lime triangle. */
-body:has([data-challenge-page]) .sl-markdown-content :not(ol) > li::before {
+body:has([data-quiet-prose]) .sl-markdown-content :not(ol) > li::before {
   content: '–';
   color: var(--term-fg-dim);
 }
 
 /* Blockquote: just a thin neutral left rule. No fill, no italic,
    no muted ink - the quote is content, not chrome. */
-body:has([data-challenge-page]) .sl-markdown-content blockquote {
+body:has([data-quiet-prose]) .sl-markdown-content blockquote {
   background: transparent;
   border-left: 2px solid var(--term-line-strong);
   color: var(--sl-color-gray-1);
@@ -1135,13 +1010,13 @@ body:has([data-challenge-page]) .sl-markdown-content blockquote {
 
 /* Tables: rules-only. No card frame, no zebra, no hover wash, no
    [bracket] sigils on headers, no per-cell column rules. */
-body:has([data-challenge-page]) .sl-markdown-content table {
+body:has([data-quiet-prose]) .sl-markdown-content table {
   background: transparent;
   border: 0;
   border-top: 1px solid var(--term-line-strong);
   border-bottom: 1px solid var(--term-line-strong);
 }
-body:has([data-challenge-page]) .sl-markdown-content thead tr th {
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th {
   color: var(--sl-color-gray-1);
   background: transparent;
   border-bottom: 1px solid var(--term-line-strong);
@@ -1150,36 +1025,36 @@ body:has([data-challenge-page]) .sl-markdown-content thead tr th {
   font-size: 12px;
   font-weight: 700;
 }
-body:has([data-challenge-page]) .sl-markdown-content thead tr th::before,
-body:has([data-challenge-page]) .sl-markdown-content thead tr th::after {
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th::before,
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th::after {
   content: none;
 }
-body:has([data-challenge-page]) .sl-markdown-content tbody tr td,
-body:has([data-challenge-page]) .sl-markdown-content thead tr th {
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr td,
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th {
   border-right: 0;
 }
-body:has([data-challenge-page]) .sl-markdown-content tbody tr {
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr {
   border-bottom: 1px solid var(--term-line);
 }
-body:has([data-challenge-page]) .sl-markdown-content tbody tr:last-child {
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr:last-child {
   border-bottom: 0;
 }
-body:has([data-challenge-page]) .sl-markdown-content tbody tr:nth-child(even) td {
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr:nth-child(even) td {
   background: transparent;
 }
-body:has([data-challenge-page]) .sl-markdown-content tbody tr:hover td {
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr:hover td {
   background: transparent;
 }
 /* image cells inside tables: no inner panel, just the image */
-body:has([data-challenge-page]) .sl-markdown-content td img,
-body:has([data-challenge-page]) .sl-markdown-content figure img {
+body:has([data-quiet-prose]) .sl-markdown-content td img,
+body:has([data-quiet-prose]) .sl-markdown-content figure img {
   border: 0;
   background: transparent;
 }
 
 /* Code frames: drop the lime accent left border. Keep the regular
    hairline so the block still has a visible edge. */
-body:has([data-challenge-page]) .expressive-code .frame {
+body:has([data-quiet-prose]) .expressive-code .frame {
   border-left: 1px solid var(--term-line-strong) !important;
 }
 
@@ -1187,14 +1062,14 @@ body:has([data-challenge-page]) .expressive-code .frame {
    to a solid hairline underline. Heading anchor links (Starlight's
    #-on-hover affordance) are excluded so they don't sprout an
    underline next to every section title. */
-body:has([data-challenge-page]) .sl-markdown-content a:not(.sl-anchor-link) {
+body:has([data-quiet-prose]) .sl-markdown-content a:not(.sl-anchor-link) {
   border-bottom: 1px solid rgba(124, 255, 90, 0.45);
 }
-body:has([data-challenge-page]) .sl-markdown-content a:not(.sl-anchor-link):hover {
+body:has([data-quiet-prose]) .sl-markdown-content a:not(.sl-anchor-link):hover {
   background: transparent;
   border-bottom-color: var(--term-lime);
 }
-body:has([data-challenge-page]) .sl-markdown-content a.sl-anchor-link {
+body:has([data-quiet-prose]) .sl-markdown-content a.sl-anchor-link {
   border-bottom: 0;
   background: transparent;
 }
