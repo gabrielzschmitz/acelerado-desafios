@@ -1,0 +1,11 @@
+---
+// Force dark theme always. No system preference, no localStorage, no toggle.
+---
+
+<script is:inline>
+  document.documentElement.dataset.theme = 'dark';
+  try {
+    localStorage.removeItem('starlight-theme');
+  } catch {}
+  window.StarlightThemeProvider = { updatePickers() {} };
+</script>

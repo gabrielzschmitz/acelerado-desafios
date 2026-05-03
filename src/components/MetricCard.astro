@@ -1,0 +1,33 @@
+---
+interface Props {
+  label: string;
+  value: string;
+  unit?: string | null;
+  arrow?: '↑' | '↓' | null;
+  hint?: string | null;
+  variant?: 'target' | 'cap' | 'neutral';
+  sparkline?: string | null;
+  featured?: boolean;
+}
+const {
+  label, value, unit, arrow, hint,
+  variant = 'neutral',
+  sparkline = null,
+  featured = false,
+} = Astro.props;
+---
+
+<div class:list={[
+  'metric-card',
+  `metric-card--${variant}`,
+  featured && 'metric-card--featured',
+]}>
+  <div class="metric-label">{label}</div>
+  <div class="metric-value">
+    <span>{value}</span>
+    {unit && <span class="metric-unit">{unit}</span>}
+    {arrow && <span class="metric-arrow">{arrow}</span>}
+  </div>
+  {sparkline && <div class="metric-spark" aria-hidden="true">{sparkline}</div>}
+  {hint && <div class="metric-hint">{hint}</div>}
+</div>

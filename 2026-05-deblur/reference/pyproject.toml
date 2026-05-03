@@ -1,0 +1,16 @@
+[project]
+name = "deblur-reference"
+version = "0.1.0"
+description = "Ferramentas de referência do desafio 2026-05 (deblur)."
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.0",
+]
+
+# Só pra rodar generate.py (download + render do dataset).
+# Os outros scripts (wiener.py, score.py, bmp_io.py) só precisam de numpy.
+[project.optional-dependencies]
+generate = [
+    "pillow>=11.0",
+    "requests>=2.32",
+]

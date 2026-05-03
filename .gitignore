@@ -22,3 +22,13 @@ __pycache__/
 *.exe
 target/
 build/
+
+# Astro / site build
+node_modules/
+dist/
+.astro/
+# synced from the source-of-truth markdown files
+src/content/docs/index.mdx
+src/content/docs/desafios/
+src/content/docs/submission.md
+src/data/challenges.json

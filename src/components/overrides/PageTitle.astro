@@ -1,0 +1,16 @@
+---
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import MetricGrid from '../MetricGrid.astro';
+
+const route = Astro.locals.starlightRoute;
+const data = route.entry.data as any;
+const strip = data?.metricStrip;
+
+// On the landing page, our <Hero /> already plays the role of the page
+// title. Skip Starlight's default title to avoid the duplicate H1.
+const slug = (route.slug ?? '') as string;
+const isLanding = slug === '' || slug === '/';
+---
+
+{!isLanding && <Default {...Astro.props}><slot /></Default>}
+{strip && <MetricGrid strip={strip} />}

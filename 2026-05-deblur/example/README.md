@@ -1,18 +1,18 @@
 # Exemplos passthrough
 
 Cada subdiretório contém um Dockerfile + um `solution.<ext>` mínimo que **só
-copia stdin pra stdout** — não desfoca nada, não passa do threshold de PSNR.
+copia stdin pra stdout** - não desfoca nada, não passa do threshold de PSNR.
 Existem pra mostrar o esqueleto de uma submissão funcional em várias
 linguagens.
 
 | Linguagem | Pasta | Imagem base | Compilação |
 |---|---|---|---|
-| Python  | [`python/`](python/) | `python:3.11-slim` | — (interpretado) |
-| Node.js | [`js/`](js/)         | `node:20-slim`     | — (interpretado) |
-| C       | [`c/`](c/)           | `gcc:13` → `debian:bookworm-slim` | `gcc -O2` |
-| C++     | [`cpp/`](cpp/)       | `gcc:13` → `debian:bookworm-slim` | `g++ -O2` (`-static-libstdc++`) |
-| Rust    | [`rust/`](rust/)     | `rust:1.83-slim` → `debian:bookworm-slim` | `rustc -O` |
-| Go      | [`go/`](go/)         | `golang:1.23-bookworm` → `scratch` | `go build` (CGO=0) |
+| Python  | [`python/`](python/) | `python:3.11-slim` | - (interpretado) |
+| Node.js | [`js/`](js/)         | `node:20-slim`     | - (interpretado) |
+| C       | [`c/`](c/)           | `gcc:13` -> `debian:bookworm-slim` | `gcc -O2` |
+| C++     | [`cpp/`](cpp/)       | `gcc:13` -> `debian:bookworm-slim` | `g++ -O2` (`-static-libstdc++`) |
+| Rust    | [`rust/`](rust/)     | `rust:1.83-slim` -> `debian:bookworm-slim` | `rustc -O` |
+| Go      | [`go/`](go/)         | `golang:1.23-bookworm` -> `scratch` | `go build` (CGO=0) |
 | Zig     | [`zig/`](zig/)       | `debian:bookworm-slim` (+ Zig 0.15.1) | `zig build -Doptimize=ReleaseSafe` (via `build.zig`) |
 
 ## Rodar qualquer um

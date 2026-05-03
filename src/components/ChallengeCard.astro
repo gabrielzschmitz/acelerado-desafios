@@ -1,0 +1,74 @@
+---
+interface Props {
+  href?: string;
+  month: string;
+  title: string;
+  primaryMetric?: string;
+  direction?: string;
+  // When true, render a non-clickable placeholder card (e.g. "next month").
+  placeholder?: boolean;
+  status?: 'aberto' | 'fechado' | 'aguardando';
+}
+const {
+  href,
+  month,
+  title,
+  primaryMetric = '',
+  direction = '',
+  placeholder = false,
+  status = 'aberto',
+} = Astro.props;
+
+function prettyMetric(name: string): string {
+  const map: Record<string, string> = {
+    psnr_mean_db: 'PSNR',
+    time_ms: 'tempo',
+    peak_rss_mb: 'memória',
+    disk_write_mb: 'disco',
+    binary_size_bytes: 'tam. bin',
+    code_size_bytes: 'tam. src',
+  };
+  return map[name] ?? name;
+}
+
+const arrow = direction === 'max' ? '↑' : direction === 'min' ? '↓' : '';
+// Tiny ASCII sparkline indicating direction (rising for max, falling for min).
+const sparkline = direction === 'max'
+  ? '▁▂▃▅▇'
+  : direction === 'min' ? '▇▅▃▂▁' : '─────';
+
+const Tag = placeholder ? 'div' : 'a';
+const tagProps = placeholder ? {} : { href };
+---
+
+<Tag class:list={['challenge-card', placeholder && 'challenge-card--placeholder']} {...tagProps}>
+  <div class="challenge-row">
+    <div class="challenge-month">{month}</div>
+    <div class:list={['challenge-status', `challenge-status--${status}`]}>
+      <span class="challenge-status-dot" aria-hidden="true"></span>{status}
+    </div>
+  </div>
+
+  <div class="challenge-title">{title}</div>
+
+  {!placeholder && primaryMetric && (
+    <div class="challenge-metric-row">
+      <div class="challenge-metric">
+        <span class="challenge-metric-key">métrica</span>
+        <span class="challenge-metric-val">{prettyMetric(primaryMetric)} {arrow}</span>
+      </div>
+      <div class="challenge-spark" aria-hidden="true">{sparkline}</div>
+    </div>
+  )}
+
+  {placeholder && (
+    <div class="challenge-placeholder-text">
+      <span class="challenge-placeholder-cursor" aria-hidden="true"></span>
+      aguardando publicação
+    </div>
+  )}
+
+  {!placeholder && (
+    <span class="challenge-arrow" aria-hidden="true">-&gt;</span>
+  )}
+</Tag>

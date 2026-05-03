@@ -1,0 +1,67 @@
+---
+import challenges from '../data/challenges.json';
+
+// Compute "next month" dynamically (1st of next month, ISO date).
+function nextMonthIso(): string {
+  const now = new Date();
+  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+  return next.toISOString().slice(0, 10);
+}
+
+const stats = {
+  publicados: challenges.length,
+  proximo:    nextMonthIso(),
+  hardware:   'fixo · 2 vCPU · 1 GB',
+};
+---
+
+<section class="hero-block" data-reveal>
+  {/* fake terminal "title bar" — left label, right status pills */}
+  <header class="hero-titlebar">
+    <span class="hero-titlebar-label">~/acelerado-desafios</span>
+    <span class="hero-titlebar-pills">
+      <span class="hero-pill is-live"><span class="hero-dot"></span>live</span>
+      <span class="hero-pill"><span class="hero-pill-k">próximo</span><span class="hero-pill-v">{stats.proximo}</span></span>
+      <span class="hero-pill"><span class="hero-pill-k">ranking</span><span class="hero-pill-v">aberto</span></span>
+    </span>
+  </header>
+
+  <div class="hero-body">
+    <div class="hero-prompt" data-reveal-item>
+      <span class="hero-sigil">$</span><span class="hero-cmd">./desafios --live</span>
+    </div>
+
+    <h1 class="hero-title" data-reveal-item>
+      acelerado<span class="hero-bracket">[</span>desafios<span class="hero-bracket">]</span>
+    </h1>
+
+    <p class="hero-tagline" data-reveal-item>
+      Um problema novo todo dia 1º. Qualquer linguagem. Hardware fixo. Ranking aberto.<span class="hero-cursor"></span>
+    </p>
+
+    <dl class="hero-meta" data-reveal-item>
+      <div class="hero-kv">
+        <dt class="hero-k">CADÊNCIA</dt>
+        <dd class="hero-v">mensal</dd>
+      </div>
+      <div class="hero-kv">
+        <dt class="hero-k">HARDWARE</dt>
+        <dd class="hero-v">{stats.hardware}</dd>
+      </div>
+      <div class="hero-kv">
+        <dt class="hero-k">PUBLICADOS</dt>
+        <dd class="hero-v">{String(stats.publicados).padStart(3, '0')}</dd>
+      </div>
+      <div class="hero-kv">
+        <dt class="hero-k">RUNTIME</dt>
+        <dd class="hero-v">docker · stdin/stdout · readonly</dd>
+      </div>
+    </dl>
+  </div>
+
+  {/* corner brackets — pure decoration */}
+  <span class="hero-corner hero-corner--tl" aria-hidden="true"></span>
+  <span class="hero-corner hero-corner--tr" aria-hidden="true"></span>
+  <span class="hero-corner hero-corner--bl" aria-hidden="true"></span>
+  <span class="hero-corner hero-corner--br" aria-hidden="true"></span>
+</section>

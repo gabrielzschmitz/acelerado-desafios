@@ -1,0 +1,100 @@
+---
+import MetricCard from './MetricCard.astro';
+
+interface Strip {
+  primaryMetric?: string | null;
+  direction?: string | null;
+  validationMinDb?: number | null;
+  capTimeMs?: number | null;
+  capRssMb?: number | null;
+  measuredRuns?: number | null;
+  warmupRuns?: number | null;
+}
+interface Props { strip: Strip | null | undefined; }
+const { strip } = Astro.props;
+
+function prettyMetric(name?: string | null): string {
+  if (!name) return '';
+  const map: Record<string, string> = {
+    psnr_mean_db: 'PSNR',
+    time_ms: 'tempo',
+    peak_rss_mb: 'memória',
+    disk_write_mb: 'disco',
+    binary_size_bytes: 'tam. bin',
+    code_size_bytes: 'tam. src',
+  };
+  return map[name] ?? name;
+}
+const arrow = strip?.direction === 'max' ? '↑' : strip?.direction === 'min' ? '↓' : null;
+const directionHint = strip?.direction === 'max'
+  ? 'vence quem maximiza'
+  : strip?.direction === 'min' ? 'vence quem minimiza' : '';
+
+// Direction sparkline: ascending for max, descending for min.
+const targetSpark = strip?.direction === 'max'
+  ? '▁▂▄▆▇'
+  : strip?.direction === 'min' ? '▇▆▄▂▁' : null;
+// Cap sparkline: rising bar that hits the wall.
+const capSpark = '▁▃▅▇█';
+---
+
+{strip && (
+  <section class="metric-strip" aria-label="Resumo do desafio">
+    <header class="metric-strip-header">
+      <span class="metric-strip-label">spec.json</span>
+      <span class="metric-strip-rule" aria-hidden="true"></span>
+      <span class="metric-strip-hint">caps duros · validação primeiro</span>
+    </header>
+    <div class="metric-grid">
+      {strip.primaryMetric && (
+        <MetricCard
+          variant="target"
+          featured
+          label="métrica primária"
+          value={prettyMetric(strip.primaryMetric)}
+          arrow={arrow}
+          sparkline={targetSpark}
+          hint={directionHint}
+        />
+      )}
+      {strip.validationMinDb !== null && strip.validationMinDb !== undefined && (
+        <MetricCard
+          variant="target"
+          label="validação mín."
+          value={String(strip.validationMinDb)}
+          unit="dB"
+          hint="abaixo disso, desclassifica"
+        />
+      )}
+      {strip.capTimeMs !== null && strip.capTimeMs !== undefined && (
+        <MetricCard
+          variant="cap"
+          label="cap tempo / img"
+          value={String(strip.capTimeMs)}
+          unit="ms"
+          sparkline={capSpark}
+          hint="hyperfine · mediana"
+        />
+      )}
+      {strip.capRssMb !== null && strip.capRssMb !== undefined && (
+        <MetricCard
+          variant="cap"
+          label="cap memória"
+          value={String(strip.capRssMb)}
+          unit="MB"
+          sparkline={capSpark}
+          hint="peak RSS"
+        />
+      )}
+      {strip.measuredRuns !== null && strip.measuredRuns !== undefined && (
+        <MetricCard
+          variant="neutral"
+          label="runs medidos"
+          value={String(strip.measuredRuns)}
+          unit="x"
+          hint={strip.warmupRuns ? `+ ${strip.warmupRuns} warmup` : 'sem warmup'}
+        />
+      )}
+    </div>
+  </section>
+)}
