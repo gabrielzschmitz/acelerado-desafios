@@ -8,7 +8,7 @@ Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa e
 
 | Mês     | Desafio                                                       | Métrica  |
 |---------|---------------------------------------------------------------|----------|
-| 2026-05 | [arrumando autofoco](2026-05-deblur/)                         | PSNR ↑   |
+| 2026-05 | [2026-05 - arrumando autofoco](2026-05-deblur/)               | PSNR ↑   |
 
 > Novos desafios são adicionados dia 1º de cada mês.
 
@@ -44,7 +44,7 @@ Cada desafio declara no próprio `README.md` e `spec.json`:
 - Os **caps duros** que desclassificam a submissão se estourados.
 - O **critério de validação** que a saída precisa atingir antes de entrar no ranking.
 
-A natureza dessas três coisas varia desafio a desafio - não tem regra global. Vale sempre o que está escrito no enunciado do mês.
+A natureza dessas três coisas varia desafio a desafio - não tem regra global. Vale sempre o que está escrito no problema do mês.
 
 **Validação roda primeiro.** Se a saída não passa o critério do desafio, a submissão é desclassificada antes de qualquer pontuação.
 **Caps sempre se aplicam.** Estourar qualquer cap declarado pelo desafio também desclassifica.
@@ -56,9 +56,9 @@ A natureza dessas três coisas varia desafio a desafio - não tem regra global. 
 - `--read-only` no container - regras exatas de escrita em disco no README de cada desafio
 - Todas as submissões públicas após o fechamento -> comunidade pode auditar
 
-## IA
+## Uso de IA
 
-Usar IA pra resolver o desafio - LLM, copilot, modelo treinado, o que for - não é encorajado nem proibido. O objetivo aqui é simples: divertir, aprender junto e competir entre gente. Quem só roda o assistente da semana contra o enunciado e manda o output está perdendo a parte interessante, mas não quebra nenhuma regra.
+**Usar IA pra resolver o desafio - LLM, copilot, modelo treinado, o que for - não é encorajado nem proibido**. O objetivo aqui é simples: divertir, aprender junto e competir entre gente. Quem só roda o assistente da semana contra o problema e manda o output está perdendo a parte interessante, mas não quebra nenhuma regra.
 
 Se você usou IA de forma não trivial na sua submissão, vale mencionar no PR. Não é pra penalizar; é pra quem lê o ranking entender o contexto.
 
@@ -66,12 +66,14 @@ Se você usou IA de forma não trivial na sua submissão, vale mencionar no PR. 
 
 ```
 YYYY-MM-<nome>/
-├── README.md            ← enunciado do problema (PT-BR)
-├── spec.json            ← métrica primária, direção, caps
-├── inputs/              ← entradas de teste públicas
-├── expected/            ← saídas de referência (ground truth)
-├── bench/run.sh         ← harness de benchmark
-└── reference/           ← implementação de referência + ferramentas
+├── README.md            <- enunciado do problema
+├── spec.json            <- métrica primária, direção, caps
+├── inputs/              <- entradas de teste públicas
+├── expected/            <- saídas de referência (ground truth)
+├── bench/run.sh         <- harness de benchmark
+├── reference/           <- implementação de referência + ferramentas
+├── example/             <- exemplos de docker para diversas linguagens
+└── comece-aqui/         <- instruções para ajudar na solução do desafio
 ```
 
 ## Licença

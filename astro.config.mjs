@@ -8,7 +8,7 @@ const SITE = 'https://wainejr.github.io';
 const BASE = '/acelerado-desafios';
 
 // Build the "Desafios" sidebar group from the discovered challenges. Each
-// challenge becomes a collapsible subgroup containing its enunciado,
+// challenge becomes a collapsible subgroup containing its problema,
 // optional comece-aqui primer, exemplos and referência (whatever exists).
 // Subgroups default collapsed, but Starlight auto-expands the one matching
 // the current route.
@@ -17,7 +17,7 @@ const desafiosGroup = {
   collapsed: false, // parent always open
   items: challenges.map((c) => {
     const items = [
-      { label: 'Enunciado', slug: `desafios/${c.slug}` },
+      { label: 'Problema', slug: `desafios/${c.slug}` },
     ];
     if (c.hasComeceAqui) {
       items.push({ label: 'Comece aqui', slug: `desafios/${c.slug}/comece-aqui` });

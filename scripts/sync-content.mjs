@@ -62,7 +62,7 @@ async function discoverChallenges() {
       direction: spec?.direction ?? '',
       hasExample: await exists(path.join(dir, 'example', 'README.md')),
       hasReference: await exists(path.join(dir, 'reference', 'README.md')),
-      hasComeceAqui: await exists(path.join(dir, 'comece-aqui.md')),
+      hasComeceAqui: await exists(path.join(dir, 'comece-aqui', 'README.md')),
     });
   }
   out.sort((a, b) => (a.month < b.month ? 1 : a.month > b.month ? -1 : 0));
@@ -174,7 +174,7 @@ async function syncChallenge(c) {
   await fs.writeFile(path.join(outDir, 'index.md'), fm + body);
 
   // ---- example/ + reference/ subpages ----
-  for (const sub of ['example', 'reference']) {
+  for (const sub of ['example', 'reference', 'comece-aqui']) {
     const subMd = path.join(c.dir, sub, 'README.md');
     if (!(await exists(subMd))) continue;
     const raw = await fs.readFile(subMd, 'utf8');
@@ -189,20 +189,6 @@ async function syncChallenge(c) {
     // (e.g. `../README.md` -> `./` for our slug)
     const rewritten = rewriteRelativeLinks(subBody, sub, c.slug);
     await fs.writeFile(path.join(outDir, `${sub}.md`), subFm + rewritten);
-  }
-
-  // ---- comece-aqui.md (top-level theory primer, optional) ----
-  const comeceMd = path.join(c.dir, 'comece-aqui.md');
-  if (await exists(comeceMd)) {
-    const raw = await fs.readFile(comeceMd, 'utf8');
-    const body = rewriteComeceAquiLinks(stripFirstH1(raw));
-    const subTitle = (await firstHeading(comeceMd)) ?? 'Comece aqui';
-    const subFm = frontmatter({
-      title: subTitle,
-      description: `${subTitle} - ${c.title}`,
-      sidebar: { order: 2 },
-    });
-    await fs.writeFile(path.join(outDir, 'comece-aqui.md'), subFm + body);
   }
 
   // ---- copy any image/asset folder the README references ----
@@ -350,16 +336,7 @@ function rewriteLandingLinks(body) {
 //     a relative URL is enough and the browser resolves it correctly.
 function rewriteChallengeLinks(body) {
   return body
-    .replace(/\]\(\.\.\/SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`)
-    .replace(/\]\(comece-aqui\.md([^\)]*)\)/g, '](./comece-aqui/$1)');
-}
-
-// And for comece-aqui.md, the contestant writes `[README](README.md)`
-// (correct on GitHub - sibling file in the challenge dir). On the site
-// the equivalent is the challenge's main page, one level up from the
-// comece-aqui sub-page.
-function rewriteComeceAquiLinks(body) {
-  return body.replace(/\]\(README\.md([^\)]*)\)/g, '](../$1)');
+    .replace(/\]\(\.\.\/SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`);
 }
 
 async function readJsonOrNull(p) {
