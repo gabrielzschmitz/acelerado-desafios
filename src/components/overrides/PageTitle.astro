@@ -5,9 +5,10 @@ const route = Astro.locals.starlightRoute;
 const data = route.entry.data as any;
 const strip = data?.metricStrip;
 
-const slug = (route.slug ?? '') as string;
-const isLanding = slug === '' || slug === '/';
-const isChallenge = slug.startsWith('desafios/');
+// In Starlight 0.38+ the route entry's slug lives at `id`, not `slug`.
+const id = (route.id ?? route.slug ?? '') as string;
+const isLanding = id === '' || id === '/';
+const isChallenge = id.startsWith('desafios/');
 
 function prettyMetric(name?: string | null): string {
   if (!name) return '';
@@ -26,7 +27,7 @@ const arrow =
   strip?.direction === 'min' ? '↓' : '';
 ---
 
-{!isLanding && <Default {...Astro.props}><slot /></Default>}
+{!isLanding && <Default />}
 
 {isChallenge && <span data-challenge-page hidden></span>}
 

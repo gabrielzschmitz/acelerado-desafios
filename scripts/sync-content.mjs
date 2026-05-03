@@ -16,6 +16,10 @@ const CHALLENGE_RE = /^\d{4}-\d{2}-[a-z0-9-]+$/;
 
 async function main() {
   const challenges = await discoverChallenges();
+  // src/content/docs/ is gitignored (its contents are synced from the
+  // source-of-truth markdown). On a fresh CI checkout the directory
+  // doesn't exist yet, so create it before we write the landing/submission.
+  await fs.mkdir(DOCS, { recursive: true });
   await fs.rm(path.join(DOCS, 'desafios'), { recursive: true, force: true });
   await fs.rm(path.join(DOCS, 'submission.md'), { force: true });
   await fs.rm(path.join(DOCS, 'index.mdx'), { force: true });
