@@ -1,6 +1,6 @@
 {
   "name": "deblur",
-  "title": "Drone amador - desfocando o autofoco ruim",
+  "title": "arrumando autofoco",
   "month": "2026-05",
   "primary_metric": "psnr_mean_db",
   "direction": "max",

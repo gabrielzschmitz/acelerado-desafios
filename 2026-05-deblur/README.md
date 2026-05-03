@@ -1,4 +1,4 @@
-# Maio 2026 - Drone amador: desfocando o autofoco ruim
+# arrumando autofoco
 
 ## O cenário
 

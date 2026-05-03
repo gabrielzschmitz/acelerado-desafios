@@ -57,6 +57,7 @@ async function discoverChallenges() {
       direction: spec?.direction ?? '',
       hasExample: await exists(path.join(dir, 'example', 'README.md')),
       hasReference: await exists(path.join(dir, 'reference', 'README.md')),
+      hasComeceAqui: await exists(path.join(dir, 'comece-aqui.md')),
     });
   }
   out.sort((a, b) => (a.month < b.month ? 1 : a.month > b.month ? -1 : 0));
@@ -176,12 +177,26 @@ async function syncChallenge(c) {
     const subFm = frontmatter({
       title: subTitle,
       description: `${subTitle} - ${c.title}`,
-      sidebar: { order: sub === 'example' ? 2 : 3 },
+      sidebar: { order: sub === 'example' ? 3 : 4 },
     });
     // rewrite relative links from the sub/ dir back up to the challenge root
     // (e.g. `../README.md` -> `./` for our slug)
     const rewritten = rewriteRelativeLinks(subBody, sub, c.slug);
     await fs.writeFile(path.join(outDir, `${sub}.md`), subFm + rewritten);
+  }
+
+  // ---- comece-aqui.md (top-level theory primer, optional) ----
+  const comeceMd = path.join(c.dir, 'comece-aqui.md');
+  if (await exists(comeceMd)) {
+    const raw = await fs.readFile(comeceMd, 'utf8');
+    const body = stripFirstH1(raw);
+    const subTitle = (await firstHeading(comeceMd)) ?? 'Comece aqui';
+    const subFm = frontmatter({
+      title: subTitle,
+      description: `${subTitle} - ${c.title}`,
+      sidebar: { order: 2 },
+    });
+    await fs.writeFile(path.join(outDir, 'comece-aqui.md'), subFm + body);
   }
 
   // ---- copy any image/asset folder the README references ----
@@ -203,6 +218,7 @@ async function writeChallengeIndex(challenges) {
     direction: c.direction,
     hasExample: c.hasExample,
     hasReference: c.hasReference,
+    hasComeceAqui: c.hasComeceAqui,
   }));
   await fs.mkdir(path.join(ROOT, 'src', 'data'), { recursive: true });
   await fs.writeFile(

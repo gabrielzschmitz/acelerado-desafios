@@ -9,8 +9,9 @@ const BASE = '/acelerado-desafios';
 
 // Build the "Desafios" sidebar group from the discovered challenges. Each
 // challenge becomes a collapsible subgroup containing its enunciado,
-// exemplos and referência (whatever exists). Subgroups default collapsed,
-// but Starlight auto-expands the one matching the current route.
+// optional comece-aqui primer, exemplos and referência (whatever exists).
+// Subgroups default collapsed, but Starlight auto-expands the one matching
+// the current route.
 const desafiosGroup = {
   label: 'Desafios',
   collapsed: false, // parent always open
@@ -18,6 +19,9 @@ const desafiosGroup = {
     const items = [
       { label: 'Enunciado', slug: `desafios/${c.slug}` },
     ];
+    if (c.hasComeceAqui) {
+      items.push({ label: 'Comece aqui', slug: `desafios/${c.slug}/comece-aqui` });
+    }
     if (c.hasExample) {
       items.push({ label: 'Exemplos', slug: `desafios/${c.slug}/example` });
     }
@@ -25,7 +29,9 @@ const desafiosGroup = {
       items.push({ label: 'Referência', slug: `desafios/${c.slug}/reference` });
     }
     return {
-      label: `${c.month} · ${c.shortTitle}`,
+      // Mirror the title as it appears in the root README's challenge table.
+      // The month is already shown in the parent "Desafios" group context.
+      label: c.shortTitle,
       collapsed: true, // only auto-opens when current page is inside
       items,
     };

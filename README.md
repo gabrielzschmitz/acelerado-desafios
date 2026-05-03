@@ -8,7 +8,7 @@ Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa e
 
 | Mês     | Desafio                                                       | Métrica  |
 |---------|---------------------------------------------------------------|----------|
-| 2026-05 | [Drone amador - desfocando o autofoco ruim](2026-05-deblur/)  | PSNR ↑   |
+| 2026-05 | [arrumando autofoco](2026-05-deblur/)                         | PSNR ↑   |
 
 > Novos desafios são adicionados dia 1º de cada mês.
 

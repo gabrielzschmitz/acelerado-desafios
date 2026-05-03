@@ -112,13 +112,15 @@ body {
 }
 .sidebar { border-right: 1px solid var(--term-line); }
 .sidebar a, .sidebar-pane a {
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: -0.005em;
 }
-.sidebar summary,
-.sidebar-pane summary,
-.sidebar .group-label,
-.sidebar-pane .group-label {
+/* Top-level groups (Desafios, Início, Submissão) read like terminal
+   section headers - uppercase, tracked, with the ## sigil. */
+.sidebar ul.top-level > li > details > summary,
+.sidebar-pane ul.top-level > li > details > summary,
+.sidebar ul.top-level > li > details > summary .group-label,
+.sidebar-pane ul.top-level > li > details > summary .group-label {
   font-family: var(--sl-font-mono) !important;
   font-size: 11px !important;
   font-weight: 700 !important;
@@ -126,12 +128,28 @@ body {
   letter-spacing: 0.14em;
   color: var(--term-fg-muted);
 }
-.sidebar summary::before,
-.sidebar-pane summary::before {
+.sidebar ul.top-level > li > details > summary::before,
+.sidebar-pane ul.top-level > li > details > summary::before {
   content: '##';
   color: var(--term-lime);
   padding-right: 0.5em;
   font-weight: 400;
+}
+/* Nested challenge entries get a calmer treatment that mirrors how
+   the title reads in the root README's challenge table - sentence
+   case, no sigil, slightly smaller than the section header. */
+.sidebar ul:not(.top-level) summary,
+.sidebar-pane ul:not(.top-level) summary,
+.sidebar ul:not(.top-level) .group-label,
+.sidebar-pane ul:not(.top-level) .group-label,
+.sidebar ul:not(.top-level) .large,
+.sidebar-pane ul:not(.top-level) .large {
+  font-family: var(--sl-font-mono) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: -0.005em !important;
+  color: var(--sl-color-gray-1) !important;
 }
 .sidebar [aria-current="page"] {
   color: var(--term-lime) !important;
@@ -427,9 +445,11 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.02;
   letter-spacing: -0.025em;
   color: var(--sl-color-white);
-  text-wrap: balance;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
+.hero-title-line { display: block; }
 .hero-bracket {
   color: var(--term-lime);
   font-weight: 400;
