@@ -19,6 +19,8 @@ Em cima disso, o sensor (sem resfriamento, ganho médio) ainda joga um chiado fi
 |:---:|:---:|
 | ![borrado](docs/house_inputs.png) | ![nítido](docs/house_expected.png) |
 
+> **Quer o contexto antes da spec?** [comece-aqui.md](comece-aqui.md) tem uma introdução curta com a teoria por trás do desafio - deconvolução, FFT e o filtro de Wiener - explicada em linguagem direta.
+
 ## A tarefa
 
 Você quer recuperar a melhor estimativa possível da imagem nítida pra cada frame ruim.
@@ -27,8 +29,9 @@ O alvo é processar a 5 fps no mínimo (uma imagem a cada 200 ms) rodando direto
 
 Concretamente: **dado um BMP borrado de 512x512, escrever um BMP do mesmo tamanho com a versão nítida estimada**, dentro do orçamento de 200 ms e 64 MB.
 
-O desafio é por **qualidade**: quem recupera mais detalhe (maior PSNR) ganha.
-Os caps de tempo e memória são duros - estourou, desclassifica - mas abaixo deles tempo e memória extras não rendem nada, o que conta é o PSNR.
+O desafio é por **qualidade**: quem recupera mais detalhe (mais fiel à imagem original) ganha.
+A fidelidade é medida via **PSNR** - explicada em detalhe na seção [Ranking](#ranking) abaixo.
+Os caps de tempo e memória são duros - estourou, desclassifica - mas abaixo deles tempo e memória extras não rendem nada, o que conta é a fidelidade.
 Detalhes na [Spec](#spec) abaixo.
 
 ## Spec
@@ -65,15 +68,15 @@ Dicas pra não bater nessa parede:
   Use apenas o wisdom embutido no binário ou desligue persistência.
 - **GPU**: indisponível no bench (não tem GPU no host).
 
-### Validação (caps duros)
+### Caps duros (tempo e memória)
 
 Estourar qualquer um destes desclassifica a submissão:
 
-- **PSNR ≥ 21 dB** contra `expected/<caso>.bmp` em **todos** os casos (públicos + ocultos), com `PSNR = 10 · log₁₀(255² / MSE)`.
-- **Tempo ≤ 200 ms por imagem** (mediana de 5 runs medidos por `hyperfine`, +1 warmup), correspondente aos 5 fps mínimos do alvo embarcado.
-- **`peak_rss_mb ≤ 64`** (RAM equivalente ao SoC de câmera do drone alvo).
+- **Tempo de execução ≤ 200 ms por imagem** (mediana de 5 runs medidos por `hyperfine`, +1 warmup), correspondente aos 5 fps mínimos do alvo embarcado.
+- **Memória de pico ≤ 64 MB** (`peak_rss_mb`, equivalente à RAM disponível no SoC de câmera do drone alvo).
 
-Os dois caps são apertados de propósito - eles refletem o orçamento real do hardware embarcado, não folga arbitrária do harness.
+Não há cap de qualidade - mesmo uma solução que recupera pouquíssimo detalhe é aceita; ela só vai ranquear baixo no PSNR (ver [Ranking](#ranking)).
+Os dois caps de execução são apertados de propósito - eles refletem o orçamento real do hardware embarcado, não folga arbitrária do harness.
 Implicações práticas:
 
 - Solução baseada em rede neural treinada precisa caber no runtime: PyTorch e TensorFlow não cabem nem como runtime (ambos passam de 200 MB).
@@ -83,8 +86,20 @@ Implicações práticas:
 
 ### Ranking
 
+A métrica de qualidade é o **PSNR** (peak signal-to-noise ratio - "razão sinal-ruído de pico").
+Em termos simples: ela compara sua imagem reconstruída pixel-a-pixel contra a imagem original nítida e mede quão próximo você chegou.
+**Quanto maior, mais fiel** sua reconstrução está do original.
+
+A unidade é o **dB** (decibel), uma escala logarítmica - cada **+6 dB equivale aproximadamente a metade do erro médio** por pixel.
+Pra dar uma ideia da escala neste desafio especificamente:
+
+- **~21 dB**: a imagem borrada bruta, sem nenhum processamento, comparada com o original.
+- **~26 dB**: o que a referência ingênua (Wiener com σ fixo) consegue na média.
+- **~30 dB**: território de uma solução decente, que estima o σ do frame corretamente.
+- **~33 dB ou mais**: solução muito boa, combinando boa estimativa de σ com refinamento iterativo ou rede neural.
+
 Quem **maximiza o PSNR médio** sobre todos os casos (públicos + ocultos) ganha.
-Acima do cap de tempo o tempo não importa - gaste os 200 ms inteiros se isso te der mais qualidade.
+Abaixo dos caps de tempo e memória, tempo e memória extras não rendem nada - gaste os 200 ms inteiros se isso te der mais fidelidade.
 
 Desempate (em ordem):
 1. Mediana de PSNR (caso o médio empate, vence quem é mais consistente)
@@ -151,11 +166,11 @@ Originais em `reference/originals/` (gerado on-demand pelo script de geração, 
 `expected/<slug>.bmp` é o ground truth (a imagem nítida - você não tem isso na prática, é só pra validar localmente).
 
 > **Stream** tende a ser o caso mais difícil: a textura fina da água e da folhagem gera alta frequência onde o defocus comeu o sinal mais útil.
-> Se não passar do threshold em `stream`, é onde começar a debugar.
+> Se seu PSNR em `stream` for visivelmente pior que nos outros casos, é por aí que começa a debugar.
 
 ## Dataset oculto
 
-Os casos do benchmark final são **outras imagens de paisagem aérea do mesmo gênero** (mais fotos USC-SIPI das categorias *aerial* e *misc*, no mesmo formato 512x512, processadas pelo mesmo modelo direto descrito acima, com σ sorteado da mesma faixa `[1.5, 3.5]`).
+Os casos do benchmark final são **outras imagens de paisagem aérea do mesmo gênero**, no mesmo formato 512x512 grayscale, processadas pelo mesmo modelo direto descrito acima e com σ sorteado da mesma faixa `[1.5, 3.5]`.
 Estatística similar ao público - o set oculto não é uma pegadinha, é só *mais do mesmo*.
 Se sua solução vai bem nos 5 públicos, deve ir bem nos ocultos também.
 
@@ -205,4 +220,4 @@ Se quiser um ponto de partida que já compila e roda sem fazer nada útil, copie
 
 ## Atribuição
 
-Imagens de teste do **USC-SIPI** (University of Southern California, Signal and Image Processing Institute, "for research and educational use").
+Imagens do dataset público do **USC-SIPI** (University of Southern California, Signal and Image Processing Institute, "for research and educational use").

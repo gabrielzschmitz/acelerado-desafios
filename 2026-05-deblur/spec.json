@@ -22,7 +22,6 @@
   },
   "validation": {
     "metric": "psnr",
-    "min_db": 21.0,
     "ground_truth_dir": "expected/"
   },
   "caps": {
