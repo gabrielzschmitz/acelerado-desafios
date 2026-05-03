@@ -56,6 +56,12 @@ A natureza dessas três coisas varia desafio a desafio - não tem regra global. 
 - `--read-only` no container - regras exatas de escrita em disco no README de cada desafio
 - Todas as submissões públicas após o fechamento -> comunidade pode auditar
 
+## IA
+
+Usar IA pra resolver o desafio - LLM, copilot, modelo treinado, o que for - não é encorajado nem proibido. O objetivo aqui é simples: divertir, aprender junto e competir entre gente. Quem só roda o assistente da semana contra o enunciado e manda o output está perdendo a parte interessante, mas não quebra nenhuma regra.
+
+Se você usou IA de forma não trivial na sua submissão, vale mencionar no PR. Não é pra penalizar; é pra quem lê o ranking entender o contexto.
+
 ## Estrutura do repo
 
 ```
