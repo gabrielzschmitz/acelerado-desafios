@@ -58,14 +58,14 @@ largura σ sorteada por frame, depois soma ruído aditivo de intensidade σ_n
 também sorteada por frame:
 
 ```
-blurred = IFFT( FFT(sharp) * FFT(gaussian_psf(sigma_i)) ) + N(0, sigma_n_i²)
+blurred = IFFT( FFT(sharp) * FFT(gaussian_psf(sigma_i)) ) + N(0, sigma_n_i^2)
 ```
 
 O solver de referência aplica Wiener com um σ_chute e um λ pré-escolhidos
 pelo mantenedor (sem adaptação ao frame):
 
 ```
-F_hat = G * conj(H(σ_chute)) / (|H(σ_chute)|² + λ)
+F_hat = G * conj(H(σ_chute)) / (|H(σ_chute)|^2 + λ)
 sharp_hat = IFFT(F_hat)
 ```
 

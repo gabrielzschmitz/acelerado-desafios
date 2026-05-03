@@ -32,9 +32,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 import bmp_io  # noqa: E402
 
 SIGMA_MIN = 0.0
-SIGMA_MAX = 10.0
-NOISE_SIGMA_MIN = 0.0
-NOISE_SIGMA_MAX = 5.0
+SIGMA_MAX = 3.5
+NOISE_SIGMA_MIN = 5.0
+NOISE_SIGMA_MAX = 15.0
 TARGET_SIZE = 512
 NOISE_RNG_SEED = 42
 SIGMA_RNG_SEED = 7
