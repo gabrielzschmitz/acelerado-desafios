@@ -13,6 +13,11 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = path.join(ROOT, 'src', 'content', 'docs');
 const CHALLENGE_RE = /^\d{4}-\d{2}-[a-z0-9-]+$/;
+// Mirror of `base` in astro.config.mjs. Used when rewriting GitHub-style
+// relative links in the source Markdown into absolute site URLs - Astro
+// doesn't auto-prepend the base to bare absolute paths in markdown links,
+// so we have to bake it in. Keep in sync with astro.config.mjs.
+const BASE = '/acelerado-desafios';
 
 async function main() {
   const challenges = await discoverChallenges();
@@ -72,7 +77,8 @@ async function syncLanding() {
   const src = path.join(ROOT, 'README.md');
   const raw = await fs.readFile(src, 'utf8');
   const noH1 = stripFirstH1(raw);
-  const replaced = replaceChallengesSection(noH1);
+  const linked = rewriteLandingLinks(noH1);
+  const replaced = replaceChallengesSection(linked);
 
   const fm = frontmatter({
     title: 'acelerado-desafios',
@@ -155,7 +161,7 @@ async function syncChallenge(c) {
 
   // ---- main page (index.md) ----
   const readme = await fs.readFile(path.join(c.dir, 'README.md'), 'utf8');
-  const body = stripFirstH1(readme);
+  const body = rewriteChallengeLinks(stripFirstH1(readme));
   const fm = frontmatter({
     title: c.title,
     description: `Desafio ${c.slug}: ${c.title}`,
@@ -189,7 +195,7 @@ async function syncChallenge(c) {
   const comeceMd = path.join(c.dir, 'comece-aqui.md');
   if (await exists(comeceMd)) {
     const raw = await fs.readFile(comeceMd, 'utf8');
-    const body = stripFirstH1(raw);
+    const body = rewriteComeceAquiLinks(stripFirstH1(raw));
     const subTitle = (await firstHeading(comeceMd)) ?? 'Comece aqui';
     const subFm = frontmatter({
       title: subTitle,
@@ -323,6 +329,37 @@ function rewriteRelativeLinks(body, sub, slug) {
   return body
     .replace(/\]\(\.\.\/README\.md([^\)]*)\)/g, '](../$1)')
     .replace(/\]\(\.\.\/SUBMISSION\.md([^\)]*)\)/g, '](/submission/$1)');
+}
+
+// Rewrite GitHub-friendly relative links in the root README so they
+// resolve on the synced landing page. The README's source-of-truth form
+// (e.g. `[SUBMISSION.md](SUBMISSION.md)`) is the right thing on GitHub
+// but becomes `/acelerado-desafios/SUBMISSION.md` on the site, which
+// 404s. Rewrite to absolute site URLs with the base prefix baked in.
+function rewriteLandingLinks(body) {
+  return body
+    .replace(/\]\(SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`)
+    .replace(/\]\(LICENSE\)/g, '](https://github.com/wainejr/acelerado-desafios/blob/main/LICENSE)');
+}
+
+// Same idea for a challenge's main README. The contestant writes
+// `[../SUBMISSION.md]` and `[comece-aqui.md]` (both correct on GitHub
+// from <slug>/README.md) - rewrite to URLs that work on the site.
+//   - SUBMISSION.md lives at the docs root, base prefix needed.
+//   - comece-aqui.md is a synced sub-page next to the challenge index;
+//     a relative URL is enough and the browser resolves it correctly.
+function rewriteChallengeLinks(body) {
+  return body
+    .replace(/\]\(\.\.\/SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`)
+    .replace(/\]\(comece-aqui\.md([^\)]*)\)/g, '](./comece-aqui/$1)');
+}
+
+// And for comece-aqui.md, the contestant writes `[README](README.md)`
+// (correct on GitHub - sibling file in the challenge dir). On the site
+// the equivalent is the challenge's main page, one level up from the
+// comece-aqui sub-page.
+function rewriteComeceAquiLinks(body) {
+  return body.replace(/\]\(README\.md([^\)]*)\)/g, '](../$1)');
 }
 
 async function readJsonOrNull(p) {
