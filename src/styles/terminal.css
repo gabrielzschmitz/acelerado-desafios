@@ -524,142 +524,11 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: none; }
 }
 
-/* ---- Metric strip (challenge pages) ---- */
-.metric-strip {
-  margin: 0 0 clamp(1.5rem, 4vw, 2.5rem);
-  border: 1px solid var(--term-line-strong);
-  background: var(--term-bg-elev);
-}
-.metric-strip-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.55rem 1rem;
-  border-bottom: 1px solid var(--term-line);
-  background: var(--term-bg-elev-2);
-  font-family: var(--sl-font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--term-fg-muted);
-}
-.metric-strip-label::before { content: '['; color: var(--term-lime); padding-right: 0.25em; }
-.metric-strip-label::after  { content: ']'; color: var(--term-lime); padding-left: 0.25em; }
-.metric-strip-rule {
-  flex: 1;
-  height: 1px;
-  background: var(--term-line);
-}
-.metric-strip-hint {
-  color: var(--term-fg-dim);
-  letter-spacing: 0.06em;
-  text-transform: none;
-}
-
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-}
-.metric-card {
-  padding: 1.1rem 1.15rem 1.35rem;
-  border-right: 1px solid var(--term-line);
-  border-bottom: 1px solid var(--term-line);
-  transition: background 120ms ease;
-  position: relative;
-  overflow: hidden;
-}
-.metric-card:hover { background: var(--term-bg-elev-2); }
-.metric-card:last-child { border-right: 0; }
-@media (max-width: 720px) {
-  .metric-card { border-right: 0; }
-}
-/* Featured (primary metric): spans 2 cols at md+ */
-@media (min-width: 720px) {
-  .metric-card--featured { grid-column: span 2; }
-}
-/* Cap cards: subtle warning hatch on hover */
-.metric-card--cap::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    -45deg,
-    transparent 0 7px,
-    rgba(255, 181, 71, 0.05) 7px 8px
-  );
-  opacity: 0;
-  transition: opacity 160ms ease;
-  pointer-events: none;
-}
-.metric-card--cap:hover::before { opacity: 1; }
-
-/* Featured target gets a subtle pulsing accent line */
-.metric-card--featured.metric-card--target::after {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--term-lime);
-  box-shadow: 0 0 10px var(--term-lime-glow);
-  animation: term-pulse-line 2.4s ease-in-out infinite;
-}
+/* keyframes shared with the Discord CTA's left-edge pulse */
 @keyframes term-pulse-line {
   0%, 100% { opacity: 0.55; }
   50%      { opacity: 1; }
 }
-
-.metric-label {
-  font-family: var(--sl-font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--term-fg-muted);
-  margin-bottom: 0.55rem;
-}
-.metric-label::before { content: '['; color: var(--term-lime); padding-right: 0.15em; }
-.metric-label::after  { content: ']'; color: var(--term-lime); padding-left: 0.15em; }
-.metric-value {
-  font-family: var(--sl-font-mono);
-  font-weight: 700;
-  font-size: clamp(1.55rem, 2.8vw, 2rem);
-  line-height: 1;
-  color: var(--sl-color-white);
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: baseline;
-  gap: 0.3rem;
-}
-.metric-card--featured .metric-value {
-  font-size: clamp(2rem, 4vw, 2.6rem);
-}
-.metric-unit {
-  font-size: 0.55em;
-  font-weight: 400;
-  color: var(--term-fg-muted);
-}
-.metric-arrow {
-  font-size: 0.7em;
-  color: var(--term-lime);
-  font-weight: 400;
-}
-.metric-spark {
-  margin-top: 0.55rem;
-  font-family: var(--sl-font-mono);
-  font-size: 14px;
-  letter-spacing: 0.08em;
-  color: var(--term-lime);
-  line-height: 1;
-}
-.metric-card--cap .metric-spark { color: var(--term-amber); }
-.metric-hint {
-  margin-top: 0.6rem;
-  font-family: var(--sl-font-mono);
-  font-size: 11px;
-  color: var(--term-fg-dim);
-  letter-spacing: 0.04em;
-}
-.metric-card--cap .metric-value { color: var(--term-amber); }
-.metric-card--target .metric-value { color: var(--term-lime); }
 
 /* ---- Challenge cards ---- */
 .challenge-grid {
@@ -1156,6 +1025,178 @@ h1, h2, h3, h4, h5, h6 {
 .term-footer-meta a:hover {
   color: var(--term-lime);
   border-bottom-color: var(--term-lime);
+}
+
+/* ============================================================
+   challenge problem pages - minimalist reading mode
+   Scoped via body:has([data-challenge-page]). The landing and
+   sidebar keep the terminal/dashboard treatment; problem pages
+   strip ornament so the prose carries the page.
+   ============================================================ */
+
+/* Quiet meta line that replaces the boxed metric-strip widget.
+   Hairline above and below; labels muted, values plain ink, the
+   direction arrow is the only place lime appears. */
+.challenge-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 2.25rem;
+  margin: 0 0 clamp(2rem, 5vw, 2.75rem);
+  padding: 0.85rem 0 1rem;
+  border-top: 1px solid var(--term-line);
+  border-bottom: 1px solid var(--term-line);
+  font-family: var(--sl-font-mono);
+}
+.challenge-meta .cm-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.challenge-meta dt {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--term-fg-muted);
+  margin: 0;
+  font-weight: 400;
+}
+.challenge-meta dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--sl-color-white);
+  letter-spacing: -0.005em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+}
+.challenge-meta .cm-arrow { color: var(--term-lime); font-size: 0.85em; }
+
+/* Drop the body grid + scanlines on challenge pages - they read
+   as texture for a dashboard, not as a comfortable reading surface. */
+body:has([data-challenge-page]) {
+  background-image: none;
+}
+
+/* Headings: drop the ##/###/#### prefix sigils and the flex layout
+   that came with them. Keep a single hairline under h2 for hierarchy. */
+body:has([data-challenge-page]) .sl-markdown-content h2 {
+  display: block;
+  border-bottom: 1px solid var(--term-line);
+  padding-bottom: 0.45rem;
+  margin-top: 2.6rem;
+}
+body:has([data-challenge-page]) .sl-markdown-content h3 {
+  display: block;
+  margin-top: 1.85rem;
+}
+body:has([data-challenge-page]) .sl-markdown-content h2::before,
+body:has([data-challenge-page]) .sl-markdown-content h3::before,
+body:has([data-challenge-page]) .sl-markdown-content h4::before {
+  content: none;
+}
+body:has([data-challenge-page]) .sl-markdown-content h4 {
+  text-transform: none;
+  letter-spacing: -0.005em;
+  color: var(--sl-color-white);
+  font-size: 1rem;
+}
+
+/* Italic emphasis: drop the cyan, keep a real italic. The cyan
+   reads as a UI badge mid-sentence and yanks the eye. */
+body:has([data-challenge-page]) .sl-markdown-content em {
+  color: inherit;
+  font-style: italic;
+}
+
+/* Inline code: neutral ink on a quiet panel. Lime stays reserved
+   for links and the meta-line arrow. */
+body:has([data-challenge-page]) .sl-markdown-content :not(pre) > code {
+  color: var(--sl-color-gray-1);
+  background: var(--term-bg-elev);
+  border: 1px solid var(--term-line);
+}
+
+/* Lists: thin en-dash marker instead of the lime triangle. */
+body:has([data-challenge-page]) .sl-markdown-content :not(ol) > li::before {
+  content: '–';
+  color: var(--term-fg-dim);
+}
+
+/* Blockquote: just a thin neutral left rule. No fill, no italic,
+   no muted ink - the quote is content, not chrome. */
+body:has([data-challenge-page]) .sl-markdown-content blockquote {
+  background: transparent;
+  border-left: 2px solid var(--term-line-strong);
+  color: var(--sl-color-gray-1);
+  font-style: normal;
+  padding: 0.15rem 0 0.15rem 1.1rem;
+}
+
+/* Tables: rules-only. No card frame, no zebra, no hover wash, no
+   [bracket] sigils on headers, no per-cell column rules. */
+body:has([data-challenge-page]) .sl-markdown-content table {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--term-line-strong);
+  border-bottom: 1px solid var(--term-line-strong);
+}
+body:has([data-challenge-page]) .sl-markdown-content thead tr th {
+  color: var(--sl-color-gray-1);
+  background: transparent;
+  border-bottom: 1px solid var(--term-line-strong);
+  text-transform: none;
+  letter-spacing: -0.005em;
+  font-size: 12px;
+  font-weight: 700;
+}
+body:has([data-challenge-page]) .sl-markdown-content thead tr th::before,
+body:has([data-challenge-page]) .sl-markdown-content thead tr th::after {
+  content: none;
+}
+body:has([data-challenge-page]) .sl-markdown-content tbody tr td,
+body:has([data-challenge-page]) .sl-markdown-content thead tr th {
+  border-right: 0;
+}
+body:has([data-challenge-page]) .sl-markdown-content tbody tr {
+  border-bottom: 1px solid var(--term-line);
+}
+body:has([data-challenge-page]) .sl-markdown-content tbody tr:last-child {
+  border-bottom: 0;
+}
+body:has([data-challenge-page]) .sl-markdown-content tbody tr:nth-child(even) td {
+  background: transparent;
+}
+body:has([data-challenge-page]) .sl-markdown-content tbody tr:hover td {
+  background: transparent;
+}
+/* image cells inside tables: no inner panel, just the image */
+body:has([data-challenge-page]) .sl-markdown-content td img,
+body:has([data-challenge-page]) .sl-markdown-content figure img {
+  border: 0;
+  background: transparent;
+}
+
+/* Code frames: drop the lime accent left border. Keep the regular
+   hairline so the block still has a visible edge. */
+body:has([data-challenge-page]) .expressive-code .frame {
+  border-left: 1px solid var(--term-line-strong) !important;
+}
+
+/* Links in body prose: keep lime (brand + findability), but switch
+   to a solid hairline underline. Heading anchor links (Starlight's
+   #-on-hover affordance) are excluded so they don't sprout an
+   underline next to every section title. */
+body:has([data-challenge-page]) .sl-markdown-content a:not(.sl-anchor-link) {
+  border-bottom: 1px solid rgba(124, 255, 90, 0.45);
+}
+body:has([data-challenge-page]) .sl-markdown-content a:not(.sl-anchor-link):hover {
+  background: transparent;
+  border-bottom-color: var(--term-lime);
+}
+body:has([data-challenge-page]) .sl-markdown-content a.sl-anchor-link {
+  border-bottom: 0;
+  background: transparent;
 }
 
 /* ---- reduced motion ---- */
