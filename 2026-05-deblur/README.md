@@ -93,10 +93,10 @@ Em termos simples: ela compara sua imagem reconstruída pixel-a-pixel contra a i
 A unidade é o **dB** (decibel), uma escala logarítmica - cada **+6 dB equivale aproximadamente a metade do erro médio** por pixel.
 Pra dar uma ideia da escala neste desafio especificamente:
 
-- **~21 dB**: a imagem borrada bruta, sem nenhum processamento, comparada com o original.
-- **~26 dB**: o que a referência ingênua (Wiener sem adaptação ao frame) consegue na média.
-- **~30 dB**: território de uma solução decente, que estima o σ do frame corretamente.
-- **~33 dB ou mais**: solução muito boa, combinando boa estimativa de σ com refinamento iterativo ou rede neural.
+- **~18 dB**: a imagem borrada bruta, sem nenhum processamento, comparada com o original - o "ponto de partida" da dificuldade.
+- **~25 dB**: solução decente que estima os parâmetros do frame e regulariza pro ruído.
+- **~32 dB**: solução boa - estimativa robusta de σ, tratamento adequado de ruído, possivelmente refinamento iterativo curto.
+- **~36 dB ou mais**: solução excelente, combinando estimativa precisa + iterações + priors fortes (até rede neural leve, dentro do orçamento).
 
 Quem **maximiza o PSNR médio** sobre todos os casos (públicos + ocultos) ganha.
 Abaixo dos caps de tempo e memória, tempo e memória extras não rendem nada - gaste os 200 ms inteiros se isso te der mais fidelidade.
