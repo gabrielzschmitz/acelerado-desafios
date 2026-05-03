@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
-Reference deblur solver — intentionally simple baseline.
+Reference deblur solver - intentionally simple baseline.
 
-Reads a 24-bit grayscale BMP from stdin (image blurred with a Gaussian PSF of
-unknown sigma in [1.5, 3.5], plus white Gaussian noise sigma=2.0), applies
-a Wiener filter with **fixed sigma = 2.5** (the midpoint of the range), and
-writes the deblurred BMP to stdout.
+Reads a 24-bit grayscale BMP from stdin (image blurred by a Gaussian PSF of
+unknown per-frame sigma, plus additive sensor noise of unknown intensity),
+applies a Wiener filter with maintainer-chosen fixed sigma and regularization,
+and writes the deblurred BMP to stdout.
 
-This baseline does NOT estimate sigma. It's deliberately suboptimal: when the
-true sigma is far from 2.5 the result is mediocre. The challenge is to do
-better — estimate sigma adaptively, use a smarter filter (Richardson-Lucy,
-TV-regularized, learning-based, ...), and beat the reference on time.
+This baseline does NOT estimate any per-frame parameters. It's deliberately
+naive: the same fixed sigma and lambda are used for every frame, regardless
+of how blurred or noisy the actual frame is. The challenge is to do better -
+estimate parameters adaptively, use a smarter filter (Richardson-Lucy,
+TV-regularized, learning-based, ...), and beat the reference on quality.
 """
 from __future__ import annotations
 
@@ -22,8 +23,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent))
 import bmp_io  # noqa: E402
 
-SIGMA_FIXED = 2.5     # midpoint of the [1.5, 3.5] range
-LAMBDA = 0.005        # Wiener regularization (tuned for noise sigma = 2.0)
+SIGMA_FIXED = 2.5     # maintainer's fixed kernel-width guess (no adaptation)
+LAMBDA = 0.005        # Wiener regularization, also fixed
 
 
 def gaussian_psf_freq(shape: tuple[int, int], sigma: float) -> np.ndarray:

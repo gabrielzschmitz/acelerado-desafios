@@ -7,14 +7,16 @@ do mantenedor.
 ## Conteúdo
 
 - `bmp_io.py` - leitor/escritor estrito de BMP 24-bit grayscale (R=G=B)
-- `wiener.py` - solver Wiener com **σ fixo = 2.5** (midpoint do range), lê
-  stdin, escreve stdout. Baseline intencionalmente burro: não estima σ.
+- `wiener.py` - solver Wiener com **parâmetros pré-escolhidos pelo
+  mantenedor** (não adapta ao frame), lê stdin, escreve stdout. Baseline
+  intencionalmente burro: não estima nada a partir do frame.
 - `score.py` - calcula PSNR entre dois BMPs (usado pelo bench harness)
 - `generate.py` - baixa as imagens originais, normaliza pra 512x512 cinza,
-  borra com PSF gaussiana σ ~ U(1.5, 3.5) sorteado por imagem + ruído branco
-  σ_n = 2.0, grava em `inputs/` e `expected/`. Os σ sorteados são impressos
-  em stderr pra o mantenedor verificar performance da referência - **não são
-  shippados** com o dataset (participantes recebem o problema cego).
+  borra com PSF gaussiana de largura σ sorteada por frame + ruído aditivo
+  de intensidade σ_n também sorteada por frame, grava em `inputs/` e
+  `expected/`. Os parâmetros sorteados são impressos em stderr pra o
+  mantenedor verificar performance da referência - **não são shippados**
+  com o dataset (participantes recebem o problema cego).
 - `Dockerfile` - empacota `wiener.py` como container, mesmo contrato das
   submissões (stdin -> stdout, **sem disco gravável**). Útil pra testar o
   `bench/run.sh` end-to-end antes de qualquer submissão real existir.
@@ -51,22 +53,26 @@ uv run --project 2026-05-deblur/reference \
 
 ## Modelo direto vs inverso
 
-O gerador aplica convolução **circular** (FFT-based) com PSF gaussiana
-de σ sorteado por imagem em [1.5, 3.5], depois soma ruído branco gaussiano
-com σ_n = 2.0:
+O gerador aplica convolução **circular** (FFT-based) com PSF gaussiana de
+largura σ sorteada por frame, depois soma ruído aditivo de intensidade σ_n
+também sorteada por frame:
 
 ```
-blurred = IFFT( FFT(sharp) * FFT(gaussian_psf(sigma_i)) ) + N(0, 2.0²)
+blurred = IFFT( FFT(sharp) * FFT(gaussian_psf(sigma_i)) ) + N(0, sigma_n_i²)
 ```
 
-O solver de referência aplica Wiener com σ_test = 2.5 (midpoint), λ = 0.005:
+O solver de referência aplica Wiener com um σ_chute e um λ pré-escolhidos
+pelo mantenedor (sem adaptação ao frame):
 
 ```
-F_hat = G * conj(H(2.5)) / (|H(2.5)|² + λ)
+F_hat = G * conj(H(σ_chute)) / (|H(σ_chute)|² + λ)
 sharp_hat = IFFT(F_hat)
 ```
 
 Implementações de submissão **devem assumir o mesmo modelo direto** -
-convolução periódica (não zero-padded), ruído branco aditivo σ_n = 2.0.
-A escolha da estratégia de inversão (Wiener com σ estimado, Richardson-Lucy,
-TV, etc.) é com você. Isso é parte do contrato do problema (ver `../README.md`).
+convolução periódica (não zero-padded), ruído aditivo per-frame.
+Os valores numéricos dos parâmetros do gerador (faixa de σ, intensidade do
+ruído) **não são divulgados** - sua estratégia de inversão precisa estimar
+ou ser robusta a essa variação. A escolha da estratégia (Wiener com σ
+estimado, Richardson-Lucy, TV, rede neural leve, etc.) é com você. Isso é
+parte do contrato do problema (ver `../README.md`).
