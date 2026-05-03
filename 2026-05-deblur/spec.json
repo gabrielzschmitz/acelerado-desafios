@@ -1,6 +1,6 @@
 {
   "name": "deblur",
-  "title": "Drone amador — desfocando o autofoco ruim",
+  "title": "Drone amador - desfocando o autofoco ruim",
   "month": "2026-05",
   "primary_metric": "psnr_mean_db",
   "direction": "max",
@@ -26,8 +26,8 @@
     "ground_truth_dir": "expected/"
   },
   "caps": {
-    "time_ms_per_image": 2000,
-    "peak_rss_mb": 1024
+    "time_ms_per_image": 200,
+    "peak_rss_mb": 64
   },
   "io": {
     "stdin": "BMP 24-bit grayscale (R=G=B), 512x512",
@@ -39,6 +39,6 @@
     "measured_runs": 5,
     "cpuset": "2,3",
     "cpus": 2,
-    "memory": "1g"
+    "memory": "64m"
   }
 }
