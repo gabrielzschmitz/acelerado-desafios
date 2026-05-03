@@ -1,8 +1,8 @@
 # acelerado-desafios
 
-Desafios mensais de performance da **Comunidade do Desempenho**.
+Desafios mensais de performance da [**Comunidade do Desempenho**](https://discord.gg/NNuzYsNPjV).
 
-Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa em **qualquer linguagem**, empacota num `Dockerfile`, abre um PR. No fim do mês as soluções são executadas em hardware fixo, o ranking é gerado e os resultados saem em vídeo no canal + post no Discord.
+Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa em **qualquer linguagem**, empacota num `Dockerfile`, abre um PR. No fim do mês as soluções são executadas em hardware fixo, o ranking é gerado e os resultados saem em vídeo no [canal](https://www.youtube.com/@waine_jr) + post no [Discord](https://discord.gg/NNuzYsNPjV).
 
 ## Desafios
 
@@ -14,7 +14,7 @@ Todo dia 1º de cada mês um problema novo é publicado aqui. Você implementa e
 
 ## Comunidade
 
-A discussão dos desafios rola no **Discord da Comunidade do Desempenho**:
+A discussão dos desafios rola no [**Discord da Comunidade do Desempenho**](https://discord.gg/NNuzYsNPjV):
 dúvidas, soluções, análises pós-fechamento e os anúncios oficiais dos
 problemas saem por lá. Quem participa dos rankings tá no servidor.
 
@@ -30,13 +30,11 @@ Outros canais:
 
 ## Como funciona
 
-1. **Dia 1**: o desafio do mês é publicado em `YYYY-MM-<nome>/` e anunciado nos canais da **Comunidade do Desempenho** (YouTube/Discord).
+1. **Dia 1**: o desafio do mês é publicado em `YYYY-MM-<nome>/` e anunciado nos canais da [**Comunidade do Desempenho**](https://discord.gg/NNuzYsNPjV) ([YouTube](https://www.youtube.com/@waine_jr) / [Discord](https://discord.gg/NNuzYsNPjV)).
 2. **Durante o mês**: você desenvolve sua solução em `<desafio>/solutions/<seu-usuario>/` no formato descrito em [SUBMISSION.md](SUBMISSION.md). Submissões ficam em branches `submissions/<usuario>` (privadas até o fechamento) ou opcionalmente em `main` (públicas durante o mês - pra quem quer flexar antes do tempo).
-3. **Dia 1 do mês seguinte**: prazo encerra. Eu rodo o benchmark localmente em hardware fixo, monto o ranking, e publico o resultado em vídeo no canal + post no Discord.
+3. **Dia 1 do mês seguinte**: prazo encerra. Os benchmarks são rodados localmente em hardware fixo, monto o ranking, e os resultados são publicados no [Discord](https://discord.gg/NNuzYsNPjV) (*+ vídeo no [canal](https://www.youtube.com/@waine_jr)*).
 
-> Nada disso é automatizado por enquanto - sem CI, sem bot. Validação e
-> ranking rodam na minha máquina. Se sua submissão tiver algum problema,
-> respondo no PR.
+> Nada disso é automatizado por enquanto - sem CI, sem bot. Se sua submissão tiver algum problema, respondo no PR.
 
 ## Métricas
 
