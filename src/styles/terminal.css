@@ -91,16 +91,17 @@ body {
 .header {
   background: var(--sl-color-bg-nav);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--term-line);
+  border-bottom: 0;
+}
+/* Starlight draws a right border on the title-wrapper to align with
+   the sidebar gutter. We don't want that hairline either. */
+.header .title-wrapper {
+  border-inline-end: 0 !important;
 }
 .site-title, .site-title * {
   font-family: var(--sl-font-mono);
   font-weight: 700;
   letter-spacing: -0.01em;
-}
-.site-title::before {
-  content: '$ ';
-  color: var(--term-lime);
 }
 
 /* ---- sidebar ---- */
@@ -115,35 +116,16 @@ body {
   font-size: 12px;
   letter-spacing: -0.005em;
 }
-/* Top-level groups (Desafios, Início, Submissão) read like terminal
-   section headers - uppercase, tracked, with the ## sigil. */
-.sidebar ul.top-level > li > details > summary,
-.sidebar-pane ul.top-level > li > details > summary,
-.sidebar ul.top-level > li > details > summary .group-label,
-.sidebar-pane ul.top-level > li > details > summary .group-label {
-  font-family: var(--sl-font-mono) !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--term-fg-muted);
-}
-.sidebar ul.top-level > li > details > summary::before,
-.sidebar-pane ul.top-level > li > details > summary::before {
-  content: '##';
-  color: var(--term-lime);
-  padding-right: 0.5em;
-  font-weight: 400;
-}
-/* Nested challenge entries get a calmer treatment that mirrors how
-   the title reads in the root README's challenge table - sentence
-   case, no sigil, slightly smaller than the section header. */
-.sidebar ul:not(.top-level) summary,
-.sidebar-pane ul:not(.top-level) summary,
-.sidebar ul:not(.top-level) .group-label,
-.sidebar-pane ul:not(.top-level) .group-label,
-.sidebar ul:not(.top-level) .large,
-.sidebar-pane ul:not(.top-level) .large {
+/* Sidebar entries (top-level links and collapsible challenge groups,
+   plus their nested subpages) all read with the same calm treatment -
+   sentence case, no sigil, mono. The challenge groups sit at root
+   level alongside Início/Submissão and toggle on click. */
+.sidebar summary,
+.sidebar-pane summary,
+.sidebar .group-label,
+.sidebar-pane .group-label,
+.sidebar .large,
+.sidebar-pane .large {
   font-family: var(--sl-font-mono) !important;
   font-size: 12.5px !important;
   font-weight: 600 !important;
@@ -155,6 +137,30 @@ body {
   color: var(--term-lime) !important;
   background: var(--term-lime-soft);
   border-inline-start: 2px solid var(--term-lime);
+}
+/* Section separator: rendered as a sidebar link by Starlight, but
+   stripped of interactivity and restyled as a fixed terminal section
+   header (uppercase, ## sigil, muted ink). Sits between the global
+   links (Início, Submissão) and the per-challenge groups. */
+.sidebar a[data-separator],
+.sidebar-pane a[data-separator] {
+  pointer-events: none;
+  cursor: default;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--sl-color-white) !important;
+  margin-top: 1.1rem;
+  background: transparent !important;
+  border-inline-start: 0 !important;
+}
+.sidebar a[data-separator]::before,
+.sidebar-pane a[data-separator]::before {
+  content: '##';
+  color: var(--term-lime);
+  padding-right: 0.5em;
+  font-weight: 400;
 }
 
 /* ---- typography ---- */
