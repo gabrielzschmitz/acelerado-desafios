@@ -13,7 +13,7 @@ Esse processo de "ponto da cena vira mancha no sensor" tem nome: **convolução*
 A mancha em si - o formato como um único ponto se espalha - se chama **kernel**, ou **PSF** (point spread function, "função de espalhamento de ponto").
 No caso do drone do desafio, a PSF é aproximadamente uma gaussiana: uma manchinha redonda, mais densa no centro, esmaecendo nas bordas.
 A "largura" dessa gaussiana é o parâmetro `σ` (sigma) - quanto maior σ, mais espalhada a mancha, mais borrada a imagem.
-O σ varia entre frames e **não é divulgado**: sua solução precisa estimá-lo a partir da própria imagem que recebe, ou ser robusta a uma faixa de valores.
+O σ é sorteado por frame em `U(0, 3.5)` (faixa declarada na [spec](README.md#como-o-frame-foi-gerado)): a faixa é conhecida, mas o valor exato de cada frame não - sua solução estima o σ a partir da imagem ou roda sobre toda a faixa.
 
 Visualmente, três níveis de borrão na mesma imagem:
 
@@ -94,7 +94,7 @@ A intuição:
 
 Calibrar lambda é parte da arte, e idealmente depende da intensidade do ruído e da intensidade do borrão.
 
-A referência que vem no repo ([`reference/wiener.py`](reference/wiener.py)) usa um `lambda` e um kernel pré-escolhidos pelo mantenedor, sem nenhuma adaptação ao frame que recebe.
+A referência que vem no repo ([`reference/wiener.py`](reference/wiener.py)) usa um `lambda` e um kernel fixos, sem nenhuma adaptação ao frame que recebe.
 Esse é o **Wiener cego ingênuo**: como ele não estima nada, quando os parâmetros reais do frame ficam perto desses chutes o resultado sai razoável; quando se distanciam, sofre.
 
 ## Por onde sua solução pode melhorar
@@ -103,7 +103,7 @@ A referência ignora pelo menos duas coisas que sua solução pode atacar:
 
 ### 1. Estimar o σ do frame
 
-O σ varia entre frames e não é divulgado, mas o Wiener da referência aplica o mesmo σ pra todo mundo.
+O σ varia entre frames dentro de `U(0, 3.5)`, mas o Wiener da referência aplica o mesmo σ pra todo mundo.
 Se você consegue estimar o σ verdadeiro a partir da imagem borrada que recebeu, já melhora significativamente.
 Algumas técnicas clássicas:
 
@@ -126,8 +126,8 @@ Em 200 ms você não roda 50 iterações de Richardson-Lucy, mas 3 a 5 passos po
 ## Pra continuar
 
 - A spec completa do desafio está no [README](README.md).
-- O modelo de geração do frame - a estrutura matemática do borrão e do ruído - está documentado na seção "[Como o frame foi gerado](README.md#como-o-frame-foi-gerado)".
-  Sua solução **pode e deve** explorar essa estrutura - mesmo que os parâmetros numéricos não sejam revelados, a forma do problema é conhecida.
+- O modelo de geração do frame - a estrutura matemática do borrão e do ruído, e as faixas dos parâmetros - está documentado na seção "[Como o frame foi gerado](README.md#como-o-frame-foi-gerado)".
+  Sua solução **pode e deve** explorar essa estrutura.
 - O código de referência está em [`reference/wiener.py`](reference/wiener.py) - leitura curta, ~50 linhas de Python + numpy.
   Boa primeira leitura pra ver o pipeline FFT -> filtro -> IFFT acontecendo na prática.
 

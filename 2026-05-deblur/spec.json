@@ -12,11 +12,17 @@
   },
   "psf": {
     "type": "gaussian",
-    "note": "per-frame sigma not disclosed; may vary between frames"
+    "sigma_distribution": "uniform",
+    "sigma_min": 0.0,
+    "sigma_max": 3.5,
+    "note": "per-frame sigma drawn i.i.d. from U(sigma_min, sigma_max)"
   },
   "noise": {
-    "type": "additive_sensor_noise",
-    "note": "per-frame intensity and character not disclosed; may vary between frames"
+    "type": "additive_white_gaussian",
+    "sigma_distribution": "uniform",
+    "sigma_min": 5.0,
+    "sigma_max": 15.0,
+    "note": "per-frame stddev drawn i.i.d. from U(sigma_min, sigma_max), pixel scale [0, 255]"
   },
   "validation": {
     "metric": "psnr",

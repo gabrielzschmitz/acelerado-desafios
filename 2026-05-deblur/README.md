@@ -60,14 +60,6 @@ Sua solução **não pode escrever em nenhum arquivo**.
 Apenas stdin de leitura, stdout/stderr de escrita, e RAM.
 Tentar escrever em qualquer lugar (incluindo `/tmp`, `~/.cache`, `/var/log`) falha com `EROFS`.
 
-Dicas pra não bater nessa parede:
-
-- **Python**: rode com `python -B` (ou `PYTHONDONTWRITEBYTECODE=1`) pra não tentar escrever `.pyc`.
-  Bibliotecas que cacheiam em `~/.cache` (matplotlib, numba JIT, etc.) podem falhar - pré-construa os caches no `Dockerfile`, não em runtime, ou use só `numpy` puro.
-- **C/C++ com FFTW**: `fftw_wisdom` por default escreve em arquivo.
-  Use apenas o wisdom embutido no binário ou desligue persistência.
-- **GPU**: indisponível no bench (não tem GPU no host).
-
 ### Caps duros (tempo e memória)
 
 Estourar qualquer um destes desclassifica a submissão:
@@ -109,17 +101,16 @@ Desempate (em ordem):
 ## Como o frame foi gerado
 
 Cada frame que sua solução recebe foi produzido a partir de uma imagem nítida pelo modelo abaixo.
-A **estrutura** do modelo é conhecida (e sua solução pode e deve explorá-la), mas os **parâmetros numéricos** - a largura do borrão, a intensidade do ruído, e como variam entre frames - **não são divulgados**.
-Sua solução precisa ser robusta a essa variação, idealmente estimando os parâmetros a partir do próprio frame que recebe, como uma câmera real faria.
+A **estrutura** e os **parâmetros do gerador** são conhecidos - sua solução pode e deve explorá-los.
+O que varia entre frames é o valor concreto sorteado dentro das faixas declaradas; cada frame tem o seu próprio σ e σ_n, e sua solução precisa lidar com essa variação (estimando per-frame ou rodando sobre toda a faixa).
 
 Componentes do modelo, na ordem em que se aplicam:
 
 1. Parte de uma imagem nítida `nitida` (uint8, 512x512 grayscale).
 2. **Borrão gaussiano periódico** aplicado via FFT: `borrada = IFFT( FFT(nitida) · FFT(kernel_σ) )`.
    A convolução é **circular** - a borda da imagem se enrola, o frame é tratado como um toro 512x512.
-   A largura σ do kernel pode variar entre frames.
-3. **Ruído aditivo do sensor** somado em cada pixel.
-   A intensidade e o caráter do ruído podem variar entre frames.
+   A largura `σ` é sorteada por frame, uniforme i.i.d. em **`U(0, 3.5)`**.
+3. **Ruído aditivo do sensor** somado em cada pixel: gaussiano branco i.i.d. de desvio padrão `σ_n`, sorteado por frame em **`U(5, 15)`** (na escala de pixel `[0, 255]`).
 4. Clipa em `[0, 255]` e quantiza para `uint8` -> arquivo BMP.
 
 O kernel gaussiano usado no passo 2 é construído como abaixo (numpy de referência; em outras linguagens, reproduzir o mesmo layout sob pena de errar a fase da deconvolução):
@@ -141,7 +132,7 @@ Equivalente: kernel gaussiano centrado em `(0, 0)`, periodicidade implícita 512
 
 ## A referência
 
-Em [`reference/wiener.py`](reference/wiener.py) mora um solver **intencionalmente burro**: aplica o filtro de Wiener com parâmetros pré-escolhidos pelo mantenedor, sem nenhuma adaptação ao frame que recebe.
+Em [`reference/wiener.py`](reference/wiener.py) mora um solver **intencionalmente burro**: aplica o filtro de Wiener com parâmetros fixos, sem nenhuma adaptação ao frame que recebe.
 É a forma mais ingênua de atacar o problema cego - quando os parâmetros reais do frame ficam perto dos chutes, o resultado sai razoável; quando se distanciam, sofre.
 
 A referência **não estima** nada a partir do frame.

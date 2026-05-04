@@ -2,10 +2,10 @@
 """
 Reference deblur solver - intentionally simple baseline.
 
-Reads a 24-bit grayscale BMP from stdin (image blurred by a Gaussian PSF of
-unknown per-frame sigma, plus additive sensor noise of unknown intensity),
-applies a Wiener filter with maintainer-chosen fixed sigma and regularization,
-and writes the deblurred BMP to stdout.
+Reads a 24-bit grayscale BMP from stdin (image blurred by a Gaussian PSF
+with per-frame sigma in U(0, 3.5), plus additive Gaussian sensor noise with
+per-frame stddev in U(5, 15)), applies a Wiener filter with fixed sigma and
+regularization, and writes the deblurred BMP to stdout.
 
 This baseline does NOT estimate any per-frame parameters. It's deliberately
 naive: the same fixed sigma and lambda are used for every frame, regardless
@@ -23,7 +23,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent))
 import bmp_io  # noqa: E402
 
-SIGMA_FIXED = 2.5     # maintainer's fixed kernel-width guess (no adaptation)
+SIGMA_FIXED = 2.5     # fixed kernel-width guess (no adaptation)
 LAMBDA = 0.005        # Wiener regularization, also fixed
 
 

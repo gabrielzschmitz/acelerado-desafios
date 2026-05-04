@@ -11,9 +11,9 @@ The forward model matches what the reference solver assumes:
     blurred = IFFT( FFT(sharp) * FFT(gaussian_psf(sigma_i)) ) + N(0, NOISE_SIGMA)
 
 with ``sigma_i`` drawn deterministically per image from
-``rng(SIGMA_RNG_SEED + i)``. The actual sigmas are printed to stderr for the
-maintainer to verify reference performance — they are NOT shipped with the
-dataset (participants face the problem blind, only knowing the range).
+``rng(SIGMA_RNG_SEED + i)``. The actual sigmas are printed to stderr at
+generation time (handy for debug/verification) but are NOT shipped with the
+dataset — participants get only the declared ranges.
 
 Sources cached locally in ``reference/originals/``. Re-running the script with
 the cache populated skips the network entirely.

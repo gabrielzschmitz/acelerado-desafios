@@ -98,7 +98,7 @@ GitHub e abrir o PR pelo botão. Os comandos de branch/commit/push são iguais.
 
 ## Validação manual
 
-Sem CI por enquanto - o mantenedor valida local e responde no PR (pode
+Sem CI por enquanto - a validação roda local e a resposta sai no PR (pode
 levar alguns dias). Se a submissão for desclassificada (não passa a
 validação do desafio, ou estoura algum cap declarado), você fica sabendo
 no PR e pode corrigir empurrando um novo commit no mesmo branch.
