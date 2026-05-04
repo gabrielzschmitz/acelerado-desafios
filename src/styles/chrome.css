@@ -85,10 +85,8 @@
 
 /* ---- Header social icons ----
    Starlight's defaults are faint and easy to miss. Bump icon size and
-   add a strong lime hover so the social bar reads as actually clickable
-   from any page. Kept icon-only - labels would wrap the bar and look
-   stacked on the narrower laptop widths the header has to share with
-   search + theme + lang controls. */
+   add a strong lime hover so the social bar reads as actually
+   clickable from any page. */
 .social-icons a {
   color: var(--sl-color-gray-1);
   padding: 0.35rem;
