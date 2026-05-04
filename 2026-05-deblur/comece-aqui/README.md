@@ -160,10 +160,3 @@ Não é uma lista exaustiva - é o "se você gostou do tema, comece por aqui".
   Mesma ideia derivada independentemente em contexto de astronomia, daí o nome composto Richardson-Lucy.
 - Rudin, L. I., Osher, S., & Fatemi, E. (1992). ["Nonlinear total variation based noise removal algorithms"](https://doi.org/10.1016/0167-2789(92)90242-F). *Physica D*, 60(1-4), 259-268. ([PDF](https://web.eecs.utk.edu/~hqi/ece692/references/noise-TV-PhysicaD92.pdf))
   Paper fundador do TV-regularizado, conhecido na literatura como "modelo ROF".
-
-### Deconvolução cega (mais avançado)
-
-- Levin, A., Weiss, Y., Durand, F., & Freeman, W. T. (2009). ["Understanding and evaluating blind deconvolution algorithms"](https://people.csail.mit.edu/billf/publications/Understanding_and_Evaluating_Blind.pdf). *CVPR*.
-  Análise crítica das abordagens cegas - útil pra entender por que estimar o kernel a partir só da imagem borrada é difícil mesmo com priors fortes.
-- Krishnan, D., & Fergus, R. (2009). ["Fast image deconvolution using hyper-Laplacian priors"](https://papers.nips.cc/paper_files/paper/2009/hash/3dd48ab31d016ffcbf3314df2b3cb9ce-Abstract.html). *NIPS*.
-  Método de deconvolução rápido usando estatística de gradientes de imagens naturais como prior.
