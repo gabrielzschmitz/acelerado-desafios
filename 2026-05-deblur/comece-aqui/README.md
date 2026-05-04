@@ -138,31 +138,32 @@ Não é uma lista exaustiva - é o "se você gostou do tema, comece por aqui".
 
 ### Material introdutório (gratuito, online)
 
-- **3Blue1Brown** ([youtube.com/@3blue1brown](https://www.youtube.com/@3blue1brown)) - canal com vídeos como "But what is the Fourier Transform? A visual introduction" e "But what is a convolution?".
-  Animações que dão a intuição visual de Fourier e convolução antes de qualquer matemática.
-- **Steven W. Smith - "The Scientist and Engineer's Guide to Digital Signal Processing"** ([dspguide.com](https://www.dspguide.com/)).
-  Livro inteiro gratuito online. Capítulos sobre convolução, FFT e filtragem, em linguagem direta com analogias antes das fórmulas.
+- **3Blue1Brown** - dois vídeos cobrem direto a teoria que o desafio usa:
+  - ["But what is the Fourier Transform? A visual introduction"](https://www.youtube.com/watch?v=spUNpyF58BY) (~21 min) - intuição visual da Transformada de Fourier.
+  - ["But what is a convolution?"](https://www.youtube.com/watch?v=KuXjwB4LzSA) (~23 min) - convolução em probabilidade e processamento de imagem, fechando com a aceleração via FFT.
+- **Steven W. Smith - "The Scientist and Engineer's Guide to Digital Signal Processing"** ([dspguide.com](https://www.dspguide.com/), gratuito online; [TOC completo](https://www.dspguide.com/pdfbook.htm)).
+  Capítulos diretamente relevantes pro desafio: [6 - Convolution](https://www.dspguide.com/ch6.htm), [12 - The Fast Fourier Transform](https://www.dspguide.com/ch12.htm), [17 - Custom Filters](https://www.dspguide.com/ch17.htm) (inclui seção sobre deconvolução), [18 - FFT Convolution](https://www.dspguide.com/ch18.htm) e [24 - Linear Image Processing](https://www.dspguide.com/ch24.htm). Linguagem direta com analogias antes das fórmulas.
 - **Wikipedia** - referências rápidas e confiáveis pros conceitos chave: [Wiener filter](https://en.wikipedia.org/wiki/Wiener_filter), [Richardson-Lucy deconvolution](https://en.wikipedia.org/wiki/Richardson%E2%80%93Lucy_deconvolution), [Total variation denoising](https://en.wikipedia.org/wiki/Total_variation_denoising), [Deconvolution](https://en.wikipedia.org/wiki/Deconvolution).
 
 ### Textbooks clássicos
 
-- **Gonzalez & Woods - "Digital Image Processing"**.
-  A referência padrão pra processamento de imagem. O capítulo de restauração de imagem cobre Wiener, regularização e métodos iterativos com profundidade. Várias edições disponíveis.
-- **Oppenheim, Schafer & Buck - "Discrete-Time Signal Processing"**.
-  Referência canônica de DSP - Fourier discreto, FFT, design de filtros. Pesado em matemática, mas é a fonte da maior parte do que aparece em livros mais introdutórios.
+- **Gonzalez & Woods - "Digital Image Processing"** (4ª ed., Pearson, 2018) - [site oficial dos autores](https://www.imageprocessingplace.com/).
+  Capítulo 4 ("Filtering in the Frequency Domain") cobre Fourier e FFT no contexto de imagem; capítulo 5 ("Image Restoration and Reconstruction") tem o filtro de Wiener (seção 5.8), filtragem inversa, regularização e métodos iterativos.
+- **Oppenheim, Schafer & Buck - "Discrete-Time Signal Processing"** (3ª ed., Pearson) - [Google Books](https://books.google.com/books/about/Discrete_time_Signal_Processing.html?id=Bv1SAAAAMAAJ).
+  Capítulos 8 ("The Discrete Fourier Transform") e 9 ("Computation of the Discrete Fourier Transform") são a fonte canônica pra DFT e FFT. Pesado em matemática, mas é a referência pro que aparece simplificado nos textos introdutórios.
 
 ### Papers originais (deconvolução iterativa e regularização)
 
-- Richardson, W. H. (1972). "Bayesian-Based Iterative Method of Image Restoration". *Journal of the Optical Society of America*, 62(1), 55-59.
+- Richardson, W. H. (1972). ["Bayesian-Based Iterative Method of Image Restoration"](https://doi.org/10.1364/JOSA.62.000055). *Journal of the Optical Society of America*, 62(1), 55-59.
   Paper original do que ficou conhecido como algoritmo Richardson-Lucy.
-- Lucy, L. B. (1974). "An iterative technique for the rectification of observed distributions". *Astronomical Journal*, 79, 745.
+- Lucy, L. B. (1974). ["An iterative technique for the rectification of observed distributions"](https://ui.adsabs.harvard.edu/abs/1974AJ.....79..745L/abstract). *Astronomical Journal*, 79, 745. ([PDF na NASA ADS](https://adsabs.harvard.edu/pdf/1974AJ.....79..745L))
   Mesma ideia derivada independentemente em contexto de astronomia, daí o nome composto Richardson-Lucy.
-- Rudin, L. I., Osher, S., & Fatemi, E. (1992). "Nonlinear total variation based noise removal algorithms". *Physica D*, 60(1-4), 259-268.
+- Rudin, L. I., Osher, S., & Fatemi, E. (1992). ["Nonlinear total variation based noise removal algorithms"](https://doi.org/10.1016/0167-2789(92)90242-F). *Physica D*, 60(1-4), 259-268. ([PDF](https://web.eecs.utk.edu/~hqi/ece692/references/noise-TV-PhysicaD92.pdf))
   Paper fundador do TV-regularizado, conhecido na literatura como "modelo ROF".
 
 ### Deconvolução cega (mais avançado)
 
-- Levin, A., Weiss, Y., Durand, F., & Freeman, W. T. (2009). "Understanding and evaluating blind deconvolution algorithms". *CVPR*.
+- Levin, A., Weiss, Y., Durand, F., & Freeman, W. T. (2009). ["Understanding and evaluating blind deconvolution algorithms"](https://people.csail.mit.edu/billf/publications/Understanding_and_Evaluating_Blind.pdf). *CVPR*.
   Análise crítica das abordagens cegas - útil pra entender por que estimar o kernel a partir só da imagem borrada é difícil mesmo com priors fortes.
-- Krishnan, D., & Fergus, R. (2009). "Fast image deconvolution using hyper-Laplacian priors". *NIPS*.
+- Krishnan, D., & Fergus, R. (2009). ["Fast image deconvolution using hyper-Laplacian priors"](https://papers.nips.cc/paper_files/paper/2009/hash/3dd48ab31d016ffcbf3314df2b3cb9ce-Abstract.html). *NIPS*.
   Método de deconvolução rápido usando estatística de gradientes de imagens naturais como prior.
