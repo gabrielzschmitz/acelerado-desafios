@@ -418,8 +418,11 @@
   display: none !important;
 }
 
-/* ---- Discord CTA ---- */
-.discord-cta {
+/* ---- Landing CTAs (Discord + GitHub) ----
+   Each CTA card is self-contained; the .cta-grid wrapper places them
+   side-by-side on the landing page (and stacks on narrow viewports). */
+.discord-cta,
+.github-cta {
   margin: clamp(1.75rem, 4vw, 2.5rem) 0;
   padding: clamp(1.4rem, 3vw, 1.85rem) clamp(1.25rem, 3vw, 1.75rem);
   background: var(--term-bg-elev);
@@ -428,7 +431,8 @@
   flex-direction: column;
   gap: 0.6rem;
 }
-.discord-cta-eyebrow {
+.discord-cta-eyebrow,
+.github-cta-eyebrow {
   margin: 0;
   font-family: var(--sl-font-mono);
   font-size: 10.5px;
@@ -436,7 +440,8 @@
   text-transform: uppercase;
   color: var(--term-fg-muted);
 }
-.discord-cta-title {
+.discord-cta-title,
+.github-cta-title {
   font-family: var(--sl-font-mono);
   font-weight: 700;
   font-size: clamp(1.25rem, 2.4vw, 1.55rem);
@@ -448,10 +453,12 @@
   padding: 0;
   display: block;
 }
-.discord-cta-title::before {
+.discord-cta-title::before,
+.github-cta-title::before {
   content: none !important;
 }
-.discord-cta-tagline {
+.discord-cta-tagline,
+.github-cta-tagline {
   margin: 0;
   font-family: var(--sl-font);
   font-size: 0.98rem;
@@ -459,7 +466,8 @@
   color: var(--sl-color-gray-1);
   max-width: 60ch;
 }
-.discord-cta-link {
+.discord-cta-link,
+.github-cta-link {
   align-self: flex-start;
   margin-top: 0.4rem;
   font-family: var(--sl-font-mono);
@@ -476,15 +484,83 @@
   padding: 0 0 0.15rem !important;
 }
 .discord-cta-link:hover,
-.discord-cta-link:focus-visible {
+.discord-cta-link:focus-visible,
+.github-cta-link:hover,
+.github-cta-link:focus-visible {
   border-bottom-color: var(--term-lime) !important;
   background: transparent !important;
 }
-.discord-cta-link-host {
+.discord-cta-link-host,
+.github-cta-link-host {
   font-weight: 400;
   font-size: 12px;
   color: var(--term-fg-dim);
   letter-spacing: 0.02em;
+}
+
+/* Two-up CTA grid on the landing. Same pixel-line trick as the
+   challenge grid: hairlines are produced by the gap showing the
+   wrapper background. Drops to a single column when there isn't
+   room for the 280px minimum. */
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1px;
+  margin: clamp(1.75rem, 4vw, 2.5rem) 0;
+  background: var(--term-line-strong);
+  border: 1px solid var(--term-line-strong);
+}
+.cta-grid > .discord-cta,
+.cta-grid > .github-cta {
+  margin: 0;
+  border: 0;
+}
+.sl-markdown-content :where(.cta-grid) {
+  max-width: none;
+}
+
+/* ---- Per-page "source on GitHub" link ----
+   Sits under the metric strip on challenge pages (and under the title
+   on the submission page) to give a one-click jump to the folder/file
+   in the repo. Kept subtle - terminal-styled, mono, dashed underline. */
+.source-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  margin: 0.85rem 0 0;
+  padding-bottom: 0.05em;
+  width: fit-content;
+  font-family: var(--sl-font-mono);
+  font-size: 12px;
+  text-decoration: none !important;
+  color: var(--term-fg-muted);
+  border-bottom: 1px dashed var(--term-line-strong);
+  transition:
+    color 140ms ease,
+    border-color 140ms ease;
+}
+.source-link:hover,
+.source-link:focus-visible {
+  color: var(--term-lime);
+  border-bottom-color: var(--term-lime);
+}
+.source-link-arrow {
+  color: var(--term-lime);
+  font-size: 11px;
+}
+.source-link-label {
+  color: var(--sl-color-gray-1);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.source-link:hover .source-link-label,
+.source-link:focus-visible .source-link-label {
+  color: var(--term-lime);
+}
+.source-link-path {
+  color: var(--term-fg-dim);
 }
 
 /* ---- Custom footer ---- */
@@ -566,6 +642,18 @@
 }
 .term-footer-links li {
   background: var(--term-bg-elev);
+}
+/* Primary entries (project repo + Discord) get a lime accent strip
+   so they read as the canonical "go here" links from the bottom of
+   any page. The label still inherits the regular color until hover. */
+.term-footer-links li.is-primary {
+  background:
+    linear-gradient(var(--term-lime-soft), var(--term-lime-soft)) left/3px 100% no-repeat,
+    var(--term-bg-elev);
+  box-shadow: inset 3px 0 0 var(--term-lime);
+}
+.term-footer-links li.is-primary .term-footer-link-label {
+  color: var(--term-lime);
 }
 .term-footer-links li::before {
   content: none;

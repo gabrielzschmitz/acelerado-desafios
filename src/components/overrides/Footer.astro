@@ -1,9 +1,17 @@
 ---
+// Project repo + Discord first - they're the primary entry points and
+// repeat in the header social bar. The remaining entries are personal
+// channels of the maintainer, kept lower in the grid.
 const links = [
-  { label: 'Discord', href: 'https://discord.gg/NNuzYsNPjV', note: 'comunidade' },
+  {
+    label: 'GitHub',
+    href: 'https://github.com/wainejr/acelerado-desafios',
+    note: 'acelerado-desafios',
+    primary: true,
+  },
+  { label: 'Discord', href: 'https://discord.gg/NNuzYsNPjV', note: 'comunidade', primary: true },
   { label: 'YouTube', href: 'https://www.youtube.com/@waine_jr', note: '@waine_jr' },
   { label: 'wainejr.com', href: 'https://wainejr.com', note: 'site' },
-  { label: 'GitHub', href: 'https://github.com/wainejr', note: '@wainejr' },
   { label: 'Instagram', href: 'https://www.instagram.com/waine_jr/', note: '@waine_jr' },
   { label: 'TikTok', href: 'https://www.tiktok.com/@waine_jr', note: '@waine_jr' },
 ];
@@ -28,7 +36,7 @@ const links = [
     <ul class="term-footer-links">
       {
         links.map((l) => (
-          <li>
+          <li class:list={[l.primary && 'is-primary']}>
             <a href={l.href} target="_blank" rel="noopener">
               <span class="term-footer-link-label">{l.label}</span>
               <span class="term-footer-link-note">{l.note}</span>
@@ -42,8 +50,6 @@ const links = [
       <span>built · static · MIT</span>
       <span class="term-footer-sep" aria-hidden="true">··</span>
       <span>no tracking · no analytics</span>
-      <span class="term-footer-sep" aria-hidden="true">··</span>
-      <a href="https://github.com/wainejr/acelerado-desafios">acelerado-desafios</a>
     </div>
   </div>
 </footer>

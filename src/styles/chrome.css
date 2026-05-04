@@ -82,3 +82,60 @@
   padding-right: 0.5em;
   font-weight: 400;
 }
+
+/* ---- Header social icons ----
+   Starlight renders the configured `social` entries as a row of icon
+   links. Default treatment is faint and easy to miss; we want the
+   GitHub-repo and Discord-server links visible from every page, so
+   they get a bordered terminal-button look with a strong lime hover.
+   Discord + GitHub additionally carry a text label on desktop. */
+.social-icons {
+  gap: 0.4rem !important;
+}
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--term-line-strong);
+  color: var(--sl-color-gray-1);
+  background: transparent;
+  transition:
+    border-color 140ms ease,
+    color 140ms ease,
+    background 140ms ease;
+}
+.social-icons a:hover,
+.social-icons a:focus-visible {
+  color: var(--term-lime);
+  border-color: var(--term-lime);
+  background: var(--term-lime-soft);
+}
+.social-icons a svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Promote the two community/source entries with a text label so
+   they're scannable as buttons, not just glyphs. Hidden below the
+   header's own collapse breakpoint to avoid wrapping the bar. */
+.social-icons a[href*="github.com/wainejr/acelerado-desafios"]::after,
+.social-icons a[href*="discord.gg"]::after {
+  font-family: var(--sl-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-transform: lowercase;
+}
+.social-icons a[href*="github.com/wainejr/acelerado-desafios"]::after {
+  content: 'github';
+}
+.social-icons a[href*="discord.gg"]::after {
+  content: 'discord';
+}
+@media (max-width: 900px) {
+  .social-icons a[href*="github.com/wainejr/acelerado-desafios"]::after,
+  .social-icons a[href*="discord.gg"]::after {
+    display: none;
+  }
+}

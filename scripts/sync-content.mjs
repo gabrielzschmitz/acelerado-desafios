@@ -95,6 +95,7 @@ async function syncLanding() {
     "import Hero from '../../components/Hero.astro';",
     "import ChallengeCard from '../../components/ChallengeCard.astro';",
     "import DiscordCTA from '../../components/DiscordCTA.astro';",
+    "import GitHubCTA from '../../components/GitHubCTA.astro';",
     "import challenges from '../../data/challenges.json';",
     '',
   ].join('\n');
@@ -133,7 +134,10 @@ function replaceChallengesSection(body) {
     '  />',
     '</div>',
     '',
-    '<DiscordCTA />',
+    '<div class="cta-grid">',
+    '  <DiscordCTA />',
+    '  <GitHubCTA />',
+    '</div>',
   ].join('\n');
 
   // Match "## Desafios" + body up to (but not including) the next H2.

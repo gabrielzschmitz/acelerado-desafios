@@ -9,6 +9,22 @@ const strip = data?.metricStrip;
 const id = (route.id ?? route.slug ?? '') as string;
 const isLanding = id === '' || id === '/';
 const isChallenge = id.startsWith('desafios/');
+const isSubmission = id === 'submission';
+
+// Deep-link "source on GitHub" for content pages. Maps the route id to the
+// canonical path inside the repo so the reader can jump straight to the
+// folder (or file) that backs the page.
+const REPO = 'https://github.com/wainejr/acelerado-desafios';
+let sourceUrl: string | null = null;
+let sourceLabel = '';
+if (isSubmission) {
+  sourceUrl = `${REPO}/blob/main/SUBMISSION.md`;
+  sourceLabel = 'SUBMISSION.md';
+} else if (isChallenge) {
+  const rel = id.slice('desafios/'.length);
+  sourceUrl = `${REPO}/tree/main/${rel}`;
+  sourceLabel = `${rel}/`;
+}
 
 function prettyMetric(name?: string | null): string {
   if (!name) return '';
@@ -77,5 +93,17 @@ const arrow = strip?.direction === 'max' ? '↑' : strip?.direction === 'min' ? 
         </div>
       )}
     </dl>
+  )
+}
+
+{
+  sourceUrl && (
+    <a class="source-link" href={sourceUrl} target="_blank" rel="noopener">
+      <span class="source-link-arrow" aria-hidden="true">
+        ↗
+      </span>
+      <span class="source-link-label">source</span>
+      <span class="source-link-path">{sourceLabel}</span>
+    </a>
   )
 }
