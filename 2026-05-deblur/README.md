@@ -19,7 +19,7 @@ Em cima disso, o sensor (sem resfriamento, ganho médio) ainda joga um chiado fi
 |:---:|:---:|
 | ![borrado](docs/house_inputs.png) | ![nítido](docs/house_expected.png) |
 
-> **Quer o contexto antes da spec?** [comece-aqui.md](comece-aqui.md) tem uma introdução curta com a teoria por trás do desafio - deconvolução, FFT e o filtro de Wiener - explicada em linguagem direta.
+> **Quer o contexto antes da spec?** [comece-aqui/](comece-aqui/) tem uma introdução curta com a teoria por trás do desafio - deconvolução, FFT e o filtro de Wiener - explicada em linguagem direta.
 
 ## A tarefa
 
