@@ -1,0 +1,66 @@
+/* Expressive Code (Starlight's syntax highlighter) overrides.
+   The lime accent on the left edge gets dropped on quiet-prose pages -
+   see quiet-prose.css. Theme tokens (codeBackground, frame colors,
+   etc.) live in astro.config.mjs under expressiveCode.styleOverrides;
+   this file handles the structural overrides that aren't expressible
+   as theme options. */
+
+.expressive-code {
+  margin: 1.3rem 0 1.7rem;
+}
+.expressive-code .frame {
+  background: transparent;
+  --ec-brdRad: 2px;
+  --ec-brdCol: var(--term-line-strong);
+  border: 1px solid var(--term-line-strong) !important;
+  border-left: 2px solid var(--term-lime) !important;
+  border-radius: 2px !important;
+}
+.expressive-code .frame.is-terminal {
+  border-left-width: 1px !important;
+}
+.expressive-code .frame .header {
+  background: var(--term-bg-elev-2) !important;
+  border-bottom: 1px solid var(--term-line) !important;
+  font-family: var(--sl-font-mono) !important;
+  color: var(--term-fg-muted) !important;
+}
+/* terminal frame: kill the macOS stoplight dots, replace with our prompt */
+.expressive-code .frame.is-terminal .header::after {
+  display: none !important;
+}
+.expressive-code .frame.is-terminal .header {
+  position: relative;
+  padding-block: 0.45rem !important;
+}
+.expressive-code .frame.is-terminal .header::before {
+  content: '$ shell';
+  color: var(--term-lime);
+  font-family: var(--sl-font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding-left: 1rem;
+  background-image: none !important;
+}
+/* "title" span - keep empty but ensure no built-in dots leak */
+.expressive-code .frame.is-terminal .header > .title {
+  background-image: none !important;
+}
+/* copy button: terminal-y, no rounded blob */
+.expressive-code .copy button {
+  background: transparent !important;
+  border: 1px solid var(--term-line) !important;
+  border-radius: 2px !important;
+  color: var(--term-fg-muted) !important;
+  font-family: var(--sl-font-mono) !important;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease,
+    background 120ms ease;
+}
+.expressive-code .copy button:hover {
+  background: var(--term-lime-soft) !important;
+  border-color: var(--term-lime) !important;
+  color: var(--term-lime) !important;
+}

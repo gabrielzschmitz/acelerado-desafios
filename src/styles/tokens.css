@@ -1,0 +1,68 @@
+/* Design tokens. Starlight's own CSS variables (--sl-*) plus our
+   terminal palette (--term-*). Loaded first so every other partial
+   can resolve var() references. */
+
+:root,
+:root[data-theme='dark'],
+:root[data-theme='light'] {
+  /* phosphor accent (Starlight uses these for default styling we keep) */
+  --sl-color-accent-low: #0a2a14;
+  --sl-color-accent: #5be07a;
+  --sl-color-accent-high: #aef5b8;
+
+  /* surfaces */
+  --sl-color-white: #f4f5f7;
+  --sl-color-gray-1: #d6d8de;
+  --sl-color-gray-2: #a3a8b3;
+  --sl-color-gray-3: #7d8290;
+  --sl-color-gray-4: #4a4f5a;
+  --sl-color-gray-5: #2a2d35;
+  --sl-color-gray-6: #16181d;
+  --sl-color-gray-7: #0c0e13;
+  --sl-color-black: #06070a;
+
+  --sl-color-bg: #06070a;
+  --sl-color-bg-nav: rgba(6, 7, 10, 0.85);
+  --sl-color-bg-sidebar: #0a0c11;
+  --sl-color-bg-inline-code: #11141b;
+  --sl-color-bg-accent: var(--sl-color-accent);
+
+  --sl-color-text: #d6d8de;
+  --sl-color-text-accent: #aef5b8;
+  --sl-color-text-invert: #000;
+
+  --sl-color-hairline: rgba(214, 216, 222, 0.1);
+  --sl-color-hairline-light: rgba(214, 216, 222, 0.06);
+  --sl-color-hairline-shade: rgba(214, 216, 222, 0.18);
+
+  --sl-font: 'Inter', system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --sl-text-h1: clamp(1.9rem, 4.5vw, 2.6rem);
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.18rem;
+
+  --sl-shadow-md: 0 1px 0 rgba(124, 255, 90, 0.05);
+
+  --sl-content-width: 48rem;
+
+  /* our own */
+  --term-lime: #7cff5a;
+  --term-lime-soft: rgba(124, 255, 90, 0.16);
+  --term-lime-glow: rgba(124, 255, 90, 0.35);
+  --term-cyan: #5ee7ff;
+  --term-amber: #ffb547;
+  --term-red: #ff5757;
+  --term-line: rgba(214, 216, 222, 0.1);
+  --term-line-strong: rgba(214, 216, 222, 0.22);
+  --term-bg-elev: #0c0e13;
+  --term-bg-elev-2: #11141b;
+  --term-grid-line: rgba(124, 255, 90, 0.04);
+  --term-scanline: rgba(255, 255, 255, 0.012);
+  --term-fg-muted: #7d8290;
+  --term-fg-dim: #4a4f5a;
+}
+
+:root {
+  color-scheme: dark;
+}

@@ -1,0 +1,31 @@
+/* Page atmosphere: body grid + scanline texture, selection color.
+   The grid/scanline gets stripped on quiet-prose pages - see
+   quiet-prose.css. */
+
+html,
+body {
+  background: var(--sl-color-bg);
+}
+body {
+  font-family: var(--sl-font);
+  background-image:
+    linear-gradient(var(--term-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--term-grid-line) 1px, transparent 1px),
+    repeating-linear-gradient(
+      0deg,
+      var(--term-scanline) 0px,
+      var(--term-scanline) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  background-size:
+    80px 80px,
+    80px 80px,
+    100% 3px;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--term-lime);
+  color: #000;
+}

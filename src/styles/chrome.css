@@ -1,0 +1,84 @@
+/* Starlight app shell: top header and the left sidebar. The
+   [data-separator] rule restyles a regular sidebar link into a fixed
+   section header (see astro.config.mjs for the head-injected critical
+   variant that prevents a flash of default styling on first paint). */
+
+/* ---- header ---- */
+.header {
+  background: var(--sl-color-bg-nav);
+  backdrop-filter: blur(8px);
+  border-bottom: 0;
+}
+/* Starlight draws a right border on the title-wrapper to align with
+   the sidebar gutter. We don't want that hairline either. */
+.header .title-wrapper {
+  border-inline-end: 0 !important;
+}
+.site-title,
+.site-title * {
+  font-family: var(--sl-font-mono);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ---- sidebar ---- */
+.sidebar,
+.sidebar *,
+.sidebar-pane,
+.sidebar-pane * {
+  font-family: var(--sl-font-mono) !important;
+}
+.sidebar {
+  border-right: 1px solid var(--term-line);
+}
+.sidebar a,
+.sidebar-pane a {
+  font-size: 12px;
+  letter-spacing: -0.005em;
+}
+/* Sidebar entries (top-level links and collapsible challenge groups,
+   plus their nested subpages) all read with the same calm treatment -
+   sentence case, no sigil, mono. The challenge groups sit at root
+   level alongside Início/Submissão and toggle on click. */
+.sidebar summary,
+.sidebar-pane summary,
+.sidebar .group-label,
+.sidebar-pane .group-label,
+.sidebar .large,
+.sidebar-pane .large {
+  font-family: var(--sl-font-mono) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: -0.005em !important;
+  color: var(--sl-color-gray-1) !important;
+}
+.sidebar [aria-current='page'] {
+  color: var(--term-lime) !important;
+  background: var(--term-lime-soft);
+  border-inline-start: 2px solid var(--term-lime);
+}
+/* Section separator: rendered as a sidebar link by Starlight, but
+   stripped of interactivity and restyled as a fixed terminal section
+   header (uppercase, ## sigil, muted ink). Sits between the global
+   links (Início, Submissão) and the per-challenge groups. */
+.sidebar a[data-separator],
+.sidebar-pane a[data-separator] {
+  pointer-events: none;
+  cursor: default;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--sl-color-white) !important;
+  margin-top: 1.1rem;
+  background: transparent !important;
+  border-inline-start: 0 !important;
+}
+.sidebar a[data-separator]::before,
+.sidebar-pane a[data-separator]::before {
+  content: '##';
+  color: var(--term-lime);
+  padding-right: 0.5em;
+  font-weight: 400;
+}

@@ -1,0 +1,177 @@
+/* Minimalist reading mode. Scoped via body:has([data-quiet-prose]).
+   Applies to challenge problem pages (PageTitle override emits the
+   marker for any /desafios/* slug) and to the landing (the Hero
+   carries it). The sidebar keeps the terminal/dashboard treatment -
+   it's nav, not reading content - and the Hero itself stays as the
+   brand surface. Everything below the Hero gets the quiet treatment.
+
+   This file must load AFTER prose.css and components.css so the
+   body:has(...) overrides win the cascade. */
+
+/* Quiet meta line that replaces the boxed metric-strip widget.
+   Hairline above and below; labels muted, values plain ink, the
+   direction arrow is the only place lime appears. */
+.challenge-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 2.25rem;
+  margin: 0 0 clamp(2rem, 5vw, 2.75rem);
+  padding: 0.85rem 0 1rem;
+  border-top: 1px solid var(--term-line);
+  border-bottom: 1px solid var(--term-line);
+  font-family: var(--sl-font-mono);
+}
+.challenge-meta .cm-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.challenge-meta dt {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--term-fg-muted);
+  margin: 0;
+  font-weight: 400;
+}
+.challenge-meta dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--sl-color-white);
+  letter-spacing: -0.005em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+}
+.challenge-meta .cm-arrow {
+  color: var(--term-lime);
+  font-size: 0.85em;
+}
+
+/* Drop the body grid + scanlines on challenge pages - they read
+   as texture for a dashboard, not as a comfortable reading surface. */
+body:has([data-quiet-prose]) {
+  background-image: none;
+}
+
+/* Headings: drop the ##/###/#### prefix sigils and the flex layout
+   that came with them. Keep a single hairline under h2 for hierarchy. */
+body:has([data-quiet-prose]) .sl-markdown-content h2 {
+  display: block;
+  border-bottom: 1px solid var(--term-line);
+  padding-bottom: 0.45rem;
+  margin-top: 2.6rem;
+}
+body:has([data-quiet-prose]) .sl-markdown-content h3 {
+  display: block;
+  margin-top: 1.85rem;
+}
+body:has([data-quiet-prose]) .sl-markdown-content h2::before,
+body:has([data-quiet-prose]) .sl-markdown-content h3::before,
+body:has([data-quiet-prose]) .sl-markdown-content h4::before {
+  content: none;
+}
+body:has([data-quiet-prose]) .sl-markdown-content h4 {
+  text-transform: none;
+  letter-spacing: -0.005em;
+  color: var(--sl-color-white);
+  font-size: 1rem;
+}
+
+/* Italic emphasis: drop the cyan, keep a real italic. The cyan
+   reads as a UI badge mid-sentence and yanks the eye. */
+body:has([data-quiet-prose]) .sl-markdown-content em {
+  color: inherit;
+  font-style: italic;
+}
+
+/* Inline code: neutral ink on a quiet panel. Lime stays reserved
+   for links and the meta-line arrow. */
+body:has([data-quiet-prose]) .sl-markdown-content :not(pre) > code {
+  color: var(--sl-color-gray-1);
+  background: var(--term-bg-elev);
+  border: 1px solid var(--term-line);
+}
+
+/* Lists: thin en-dash marker instead of the lime triangle. */
+body:has([data-quiet-prose]) .sl-markdown-content :not(ol) > li::before {
+  content: '–';
+  color: var(--term-fg-dim);
+}
+
+/* Blockquote: just a thin neutral left rule. No fill, no italic,
+   no muted ink - the quote is content, not chrome. */
+body:has([data-quiet-prose]) .sl-markdown-content blockquote {
+  background: transparent;
+  border-left: 2px solid var(--term-line-strong);
+  color: var(--sl-color-gray-1);
+  font-style: normal;
+  padding: 0.15rem 0 0.15rem 1.1rem;
+}
+
+/* Tables: rules-only. No card frame, no zebra, no hover wash, no
+   [bracket] sigils on headers, no per-cell column rules. */
+body:has([data-quiet-prose]) .sl-markdown-content table {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--term-line-strong);
+  border-bottom: 1px solid var(--term-line-strong);
+}
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th {
+  color: var(--sl-color-gray-1);
+  background: transparent;
+  border-bottom: 1px solid var(--term-line-strong);
+  text-transform: none;
+  letter-spacing: -0.005em;
+  font-size: 12px;
+  font-weight: 700;
+}
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th::before,
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th::after {
+  content: none;
+}
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr td,
+body:has([data-quiet-prose]) .sl-markdown-content thead tr th {
+  border-right: 0;
+}
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr {
+  border-bottom: 1px solid var(--term-line);
+}
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr:last-child {
+  border-bottom: 0;
+}
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr:nth-child(even) td {
+  background: transparent;
+}
+body:has([data-quiet-prose]) .sl-markdown-content tbody tr:hover td {
+  background: transparent;
+}
+/* image cells inside tables: no inner panel, just the image */
+body:has([data-quiet-prose]) .sl-markdown-content td img,
+body:has([data-quiet-prose]) .sl-markdown-content figure img {
+  border: 0;
+  background: transparent;
+}
+
+/* Code frames: drop the lime accent left border. Keep the regular
+   hairline so the block still has a visible edge. */
+body:has([data-quiet-prose]) .expressive-code .frame {
+  border-left: 1px solid var(--term-line-strong) !important;
+}
+
+/* Links in body prose: keep lime (brand + findability), but switch
+   to a solid hairline underline. Heading anchor links (Starlight's
+   #-on-hover affordance) are excluded so they don't sprout an
+   underline next to every section title. */
+body:has([data-quiet-prose]) .sl-markdown-content a:not(.sl-anchor-link) {
+  border-bottom: 1px solid rgba(124, 255, 90, 0.45);
+}
+body:has([data-quiet-prose]) .sl-markdown-content a:not(.sl-anchor-link):hover {
+  background: transparent;
+  border-bottom-color: var(--term-lime);
+}
+body:has([data-quiet-prose]) .sl-markdown-content a.sl-anchor-link {
+  border-bottom: 0;
+  background: transparent;
+}

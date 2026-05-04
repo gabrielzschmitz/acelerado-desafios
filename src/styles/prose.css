@@ -1,0 +1,168 @@
+/* Markdown content styling for .sl-markdown-content: headings with
+   ##/###/#### sigils, terminal-caret unordered lists, dotted lime
+   links, blockquote rule, box-drawing tables, inline code chips.
+   The quiet-prose mode (quiet-prose.css) overrides most of this on
+   challenge pages where readability beats dashboard texture. */
+
+/* ---- typography ---- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--sl-font-mono);
+  letter-spacing: -0.01em;
+  color: var(--sl-color-white);
+}
+.sl-markdown-content h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--term-line);
+  padding-bottom: 0.5rem;
+}
+.sl-markdown-content h2::before {
+  content: '##';
+  color: var(--term-lime);
+  font-weight: 400;
+}
+.sl-markdown-content h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.sl-markdown-content h3::before {
+  content: '###';
+  color: var(--term-lime);
+  font-weight: 400;
+}
+.sl-markdown-content h4 {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--term-fg-muted);
+}
+.sl-markdown-content h4::before {
+  content: '#### ';
+  color: var(--term-lime);
+}
+
+.sl-markdown-content em {
+  color: var(--term-cyan);
+  font-style: normal;
+}
+.sl-markdown-content strong {
+  color: var(--sl-color-white);
+}
+
+/* lists with terminal carets */
+.sl-markdown-content :not(ol) > li {
+  position: relative;
+  list-style: none;
+  padding-left: 1.5rem;
+}
+.sl-markdown-content :not(ol) > li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--term-lime);
+  font-family: var(--sl-font-mono);
+}
+.sl-markdown-content ol > li::marker {
+  color: var(--term-lime);
+  font-family: var(--sl-font-mono);
+}
+
+/* links */
+.sl-markdown-content a {
+  color: var(--term-lime);
+  border-bottom: 1px dotted var(--term-lime);
+  text-decoration: none;
+}
+.sl-markdown-content a:hover {
+  background: var(--term-lime-soft);
+  border-bottom-style: solid;
+}
+
+/* blockquotes */
+.sl-markdown-content blockquote {
+  border-left: 2px solid var(--term-lime);
+  background: var(--term-bg-elev);
+  color: var(--term-fg-muted);
+  font-style: italic;
+  padding: 0.6rem 1.25rem;
+}
+
+/* ---- tables: box-drawing-inspired ---- */
+.sl-markdown-content table {
+  font-family: var(--sl-font-mono);
+  font-size: 13px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--term-line-strong);
+  background: var(--term-bg-elev);
+  width: 100%;
+}
+.sl-markdown-content thead tr th {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--term-lime);
+  background: var(--term-bg-elev-2);
+  border-bottom: 1px solid var(--term-lime);
+  position: relative;
+}
+.sl-markdown-content thead tr th::before {
+  content: '[';
+  color: var(--term-fg-dim);
+  padding-right: 0.25em;
+  font-weight: 400;
+}
+.sl-markdown-content thead tr th::after {
+  content: ']';
+  color: var(--term-fg-dim);
+  padding-left: 0.25em;
+  font-weight: 400;
+}
+.sl-markdown-content tbody tr td,
+.sl-markdown-content thead tr th {
+  padding: 0.7rem 1rem;
+  border-right: 1px solid var(--term-line);
+  vertical-align: top;
+}
+.sl-markdown-content tbody tr td:last-child,
+.sl-markdown-content thead tr th:last-child {
+  border-right: 0;
+}
+.sl-markdown-content tbody tr {
+  border-bottom: 1px solid var(--term-line);
+}
+.sl-markdown-content tbody tr:last-child {
+  border-bottom: 0;
+}
+.sl-markdown-content tbody tr:nth-child(even) td {
+  background: rgba(124, 255, 90, 0.015);
+}
+.sl-markdown-content tbody tr:hover td {
+  background: var(--term-bg-elev-2);
+}
+.sl-markdown-content td:has(img) {
+  text-align: center;
+  padding: 0.5rem;
+}
+.sl-markdown-content td img,
+.sl-markdown-content figure img {
+  border: 1px solid var(--term-line);
+  background: var(--term-bg-elev);
+  margin: 0 auto;
+}
+
+/* inline code */
+.sl-markdown-content :not(pre) > code {
+  color: var(--term-lime);
+  background: var(--term-bg-elev);
+  border: 1px solid var(--term-line);
+  border-radius: 2px;
+  padding: 0.1em 0.4em;
+  font-size: 0.92em;
+}
