@@ -12,9 +12,7 @@ const BASE = '/acelerado-desafios';
 // A non-interactive "Desafios" row sits above them as a section
 // separator. Starlight auto-opens the group matching the current route.
 const challengeGroups = challenges.map((c) => {
-  const items = [
-    { label: 'Problema', slug: `desafios/${c.slug}` },
-  ];
+  const items = [{ label: 'Problema', slug: `desafios/${c.slug}` }];
   if (c.hasComeceAqui) {
     items.push({ label: 'Comece aqui', slug: `desafios/${c.slug}/comece-aqui` });
   }
@@ -38,16 +36,19 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'acelerado-desafios',
-      description:
-        'Desafios mensais de performance da Comunidade do Desempenho.',
+      description: 'Desafios mensais de performance da Comunidade do Desempenho.',
       defaultLocale: 'root',
       locales: {
         root: { label: 'Português (Brasil)', lang: 'pt-BR' },
       },
       social: [
-        { icon: 'github',    label: 'GitHub do projeto', href: 'https://github.com/wainejr/acelerado-desafios' },
-        { icon: 'discord',   label: 'Discord da comunidade', href: 'https://discord.gg/NNuzYsNPjV' },
-        { icon: 'youtube',   label: 'YouTube',  href: 'https://www.youtube.com/@waine_jr' },
+        {
+          icon: 'github',
+          label: 'GitHub do projeto',
+          href: 'https://github.com/wainejr/acelerado-desafios',
+        },
+        { icon: 'discord', label: 'Discord da comunidade', href: 'https://discord.gg/NNuzYsNPjV' },
+        { icon: 'youtube', label: 'YouTube', href: 'https://www.youtube.com/@waine_jr' },
         { icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/waine_jr/' },
       ],
       favicon: '/favicon.svg',
@@ -145,7 +146,8 @@ export default defineConfig({
         styleOverrides: {
           borderColor: 'rgba(214, 216, 222, 0.22)',
           borderRadius: '2px',
-          codeFontFamily: "'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace",
+          codeFontFamily:
+            "'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace",
           codeFontSize: '13px',
           codeLineHeight: '1.55',
           codePaddingBlock: '0.95rem',

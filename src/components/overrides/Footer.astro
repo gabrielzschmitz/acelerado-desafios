@@ -1,11 +1,11 @@
 ---
 const links = [
-  { label: 'Discord',     href: 'https://discord.gg/NNuzYsNPjV',           note: 'comunidade' },
-  { label: 'YouTube',     href: 'https://www.youtube.com/@waine_jr',       note: '@waine_jr' },
-  { label: 'wainejr.com', href: 'https://wainejr.com',                     note: 'site' },
-  { label: 'GitHub',      href: 'https://github.com/wainejr',              note: '@wainejr' },
-  { label: 'Instagram',   href: 'https://www.instagram.com/waine_jr/',     note: '@waine_jr' },
-  { label: 'TikTok',      href: 'https://www.tiktok.com/@waine_jr',        note: '@waine_jr' },
+  { label: 'Discord', href: 'https://discord.gg/NNuzYsNPjV', note: 'comunidade' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@waine_jr', note: '@waine_jr' },
+  { label: 'wainejr.com', href: 'https://wainejr.com', note: 'site' },
+  { label: 'GitHub', href: 'https://github.com/wainejr', note: '@wainejr' },
+  { label: 'Instagram', href: 'https://www.instagram.com/waine_jr/', note: '@waine_jr' },
+  { label: 'TikTok', href: 'https://www.tiktok.com/@waine_jr', note: '@waine_jr' },
 ];
 ---
 
@@ -21,18 +21,21 @@ const links = [
     </div>
 
     <div class="term-footer-prompt">
-      <span class="term-footer-sigil">$</span>cat&nbsp;~/.contact<span class="term-footer-blink"></span>
+      <span class="term-footer-sigil">$</span>cat&nbsp;~/.contact<span class="term-footer-blink"
+      ></span>
     </div>
 
     <ul class="term-footer-links">
-      {links.map((l) => (
-        <li>
-          <a href={l.href} target="_blank" rel="noopener">
-            <span class="term-footer-link-label">{l.label}</span>
-            <span class="term-footer-link-note">{l.note}</span>
-          </a>
-        </li>
-      ))}
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href} target="_blank" rel="noopener">
+              <span class="term-footer-link-label">{l.label}</span>
+              <span class="term-footer-link-note">{l.note}</span>
+            </a>
+          </li>
+        ))
+      }
     </ul>
 
     <div class="term-footer-meta">

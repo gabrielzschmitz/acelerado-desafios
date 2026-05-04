@@ -38,9 +38,7 @@ async function main() {
     await syncChallenge(c);
   }
 
-  console.log(
-    `Synced landing + SUBMISSION.md + ${challenges.length} challenge(s)`,
-  );
+  console.log(`Synced landing + SUBMISSION.md + ${challenges.length} challenge(s)`);
 }
 
 async function discoverChallenges() {
@@ -50,7 +48,11 @@ async function discoverChallenges() {
     if (!e.isDirectory() || !CHALLENGE_RE.test(e.name)) continue;
     const dir = path.join(ROOT, e.name);
     const readme = path.join(dir, 'README.md');
-    try { await fs.access(readme); } catch { continue; }
+    try {
+      await fs.access(readme);
+    } catch {
+      continue;
+    }
     const spec = await readJsonOrNull(path.join(dir, 'spec.json'));
     out.push({
       slug: e.name,
@@ -82,8 +84,7 @@ async function syncLanding() {
 
   const fm = frontmatter({
     title: 'acelerado-desafios',
-    description:
-      'Desafios mensais de performance da Comunidade do Desempenho.',
+    description: 'Desafios mensais de performance da Comunidade do Desempenho.',
     template: 'doc',
     tableOfContents: false,
     sidebar: { hidden: true }, // already linked as "Início" in astro.config
@@ -256,7 +257,10 @@ function toYaml(value, indent = 0) {
 
 function indentBlock(s, indent) {
   const pad = '  '.repeat(indent);
-  return s.split('\n').map((l) => (l ? pad + l : l)).join('\n');
+  return s
+    .split('\n')
+    .map((l) => (l ? pad + l : l))
+    .join('\n');
 }
 
 function stripFirstH1(raw) {
@@ -325,7 +329,10 @@ function rewriteRelativeLinks(body, sub, slug) {
 function rewriteLandingLinks(body) {
   return body
     .replace(/\]\(SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`)
-    .replace(/\]\(LICENSE\)/g, '](https://github.com/wainejr/acelerado-desafios/blob/main/LICENSE)');
+    .replace(
+      /\]\(LICENSE\)/g,
+      '](https://github.com/wainejr/acelerado-desafios/blob/main/LICENSE)',
+    );
 }
 
 // Same idea for a challenge's main README. The contestant writes
@@ -335,8 +342,7 @@ function rewriteLandingLinks(body) {
 //   - comece-aqui.md is a synced sub-page next to the challenge index;
 //     a relative URL is enough and the browser resolves it correctly.
 function rewriteChallengeLinks(body) {
-  return body
-    .replace(/\]\(\.\.\/SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`);
+  return body.replace(/\]\(\.\.\/SUBMISSION\.md([^\)]*)\)/g, `](${BASE}/submission/$1)`);
 }
 
 async function readJsonOrNull(p) {
@@ -348,7 +354,12 @@ async function readJsonOrNull(p) {
 }
 
 async function exists(p) {
-  try { await fs.access(p); return true; } catch { return false; }
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function copyDir(src, dst) {

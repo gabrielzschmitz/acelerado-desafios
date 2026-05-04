@@ -22,49 +22,60 @@ function prettyMetric(name?: string | null): string {
   };
   return map[name] ?? name;
 }
-const arrow =
-  strip?.direction === 'max' ? '↑' :
-  strip?.direction === 'min' ? '↓' : '';
+const arrow = strip?.direction === 'max' ? '↑' : strip?.direction === 'min' ? '↓' : '';
 ---
 
 {!isLanding && <Default />}
 
-{isChallenge && <span data-quiet-prose hidden></span>}
+{isChallenge && <span data-quiet-prose hidden />}
 
-{strip && (
-  <dl class="challenge-meta" aria-label="Resumo do desafio">
-    {strip.primaryMetric && (
-      <div class="cm-item">
-        <dt>métrica</dt>
-        <dd>
-          <span class="cm-v">{prettyMetric(strip.primaryMetric)}</span>
-          {arrow && <span class="cm-arrow">{arrow}</span>}
-        </dd>
-      </div>
-    )}
-    {strip.validationMinDb != null && (
-      <div class="cm-item">
-        <dt>validação</dt>
-        <dd><span class="cm-v">{strip.validationMinDb} dB+</span></dd>
-      </div>
-    )}
-    {strip.capTimeMs != null && (
-      <div class="cm-item">
-        <dt>cap tempo</dt>
-        <dd><span class="cm-v">{strip.capTimeMs} ms</span></dd>
-      </div>
-    )}
-    {strip.capRssMb != null && (
-      <div class="cm-item">
-        <dt>cap memória</dt>
-        <dd><span class="cm-v">{strip.capRssMb} MB</span></dd>
-      </div>
-    )}
-    {strip.measuredRuns != null && (
-      <div class="cm-item">
-        <dt>runs</dt>
-        <dd><span class="cm-v">{strip.measuredRuns}{strip.warmupRuns ? ` +${strip.warmupRuns} warmup` : ''}</span></dd>
-      </div>
-    )}
-  </dl>
-)}
+{
+  strip && (
+    <dl class="challenge-meta" aria-label="Resumo do desafio">
+      {strip.primaryMetric && (
+        <div class="cm-item">
+          <dt>métrica</dt>
+          <dd>
+            <span class="cm-v">{prettyMetric(strip.primaryMetric)}</span>
+            {arrow && <span class="cm-arrow">{arrow}</span>}
+          </dd>
+        </div>
+      )}
+      {strip.validationMinDb != null && (
+        <div class="cm-item">
+          <dt>validação</dt>
+          <dd>
+            <span class="cm-v">{strip.validationMinDb} dB+</span>
+          </dd>
+        </div>
+      )}
+      {strip.capTimeMs != null && (
+        <div class="cm-item">
+          <dt>cap tempo</dt>
+          <dd>
+            <span class="cm-v">{strip.capTimeMs} ms</span>
+          </dd>
+        </div>
+      )}
+      {strip.capRssMb != null && (
+        <div class="cm-item">
+          <dt>cap memória</dt>
+          <dd>
+            <span class="cm-v">{strip.capRssMb} MB</span>
+          </dd>
+        </div>
+      )}
+      {strip.measuredRuns != null && (
+        <div class="cm-item">
+          <dt>runs</dt>
+          <dd>
+            <span class="cm-v">
+              {strip.measuredRuns}
+              {strip.warmupRuns ? ` +${strip.warmupRuns} warmup` : ''}
+            </span>
+          </dd>
+        </div>
+      )}
+    </dl>
+  )
+}

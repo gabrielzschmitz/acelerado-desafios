@@ -47,18 +47,24 @@ const tagProps = placeholder ? {} : { href };
 
   <div class="challenge-title">{title}</div>
 
-  {!placeholder && primaryMetric && (
-    <div class="challenge-metric">
-      <span class="challenge-metric-key">métrica</span>
-      <span class="challenge-metric-val">{prettyMetric(primaryMetric)} {arrow}</span>
-    </div>
-  )}
+  {
+    !placeholder && primaryMetric && (
+      <div class="challenge-metric">
+        <span class="challenge-metric-key">métrica</span>
+        <span class="challenge-metric-val">
+          {prettyMetric(primaryMetric)} {arrow}
+        </span>
+      </div>
+    )
+  }
 
-  {placeholder && (
-    <div class="challenge-placeholder-text">aguardando publicação</div>
-  )}
+  {placeholder && <div class="challenge-placeholder-text">aguardando publicação</div>}
 
-  {!placeholder && (
-    <span class="challenge-arrow" aria-hidden="true">-&gt;</span>
-  )}
+  {
+    !placeholder && (
+      <span class="challenge-arrow" aria-hidden="true">
+        -&gt;
+      </span>
+    )
+  }
 </Tag>

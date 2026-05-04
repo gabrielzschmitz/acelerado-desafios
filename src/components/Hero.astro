@@ -9,7 +9,7 @@ function nextMonthIso(): string {
 
 const stats = {
   publicados: challenges.length,
-  proximo:    nextMonthIso(),
+  proximo: nextMonthIso(),
 };
 ---
 
@@ -19,7 +19,10 @@ const stats = {
     <span class="hero-titlebar-label">~/acelerado-desafios</span>
     <span class="hero-titlebar-pills">
       <span class="hero-pill is-live"><span class="hero-dot"></span>live</span>
-      <span class="hero-pill"><span class="hero-pill-k">próximo</span><span class="hero-pill-v">{stats.proximo}</span></span>
+      <span class="hero-pill"
+        ><span class="hero-pill-k">próximo</span><span class="hero-pill-v">{stats.proximo}</span
+        ></span
+      >
     </span>
   </header>
 
@@ -30,11 +33,14 @@ const stats = {
 
     <h1 class="hero-title" data-reveal-item>
       <span class="hero-title-line">acelerado</span>
-      <span class="hero-title-line"><span class="hero-bracket">[</span>desafios<span class="hero-bracket">]</span></span>
+      <span class="hero-title-line"
+        ><span class="hero-bracket">[</span>desafios<span class="hero-bracket">]</span></span
+      >
     </h1>
 
     <p class="hero-tagline" data-reveal-item>
-      Um problema novo todo dia 1º. Qualquer linguagem. Métrica, caps e validação definidos por desafio.<span class="hero-cursor"></span>
+      Um problema novo todo dia 1º. Qualquer linguagem. Métrica, caps e validação definidos por
+      desafio.<span class="hero-cursor"></span>
     </p>
 
     <dl class="hero-meta" data-reveal-item>
