@@ -1,7 +1,7 @@
 # Comece aqui
 
 Esse documento dá o contexto teórico do desafio - o que é deconvolução, por que FFT entra na história, como o filtro de Wiener funciona - em linguagem direta.
-Se você já está confortável com esses temas, pula direto pro [README](README.md).
+Se você já está confortável com esses temas, pula direto pro [README](../README.md).
 
 ## O que é "deconvolução"?
 
@@ -13,7 +13,7 @@ Esse processo de "ponto da cena vira mancha no sensor" tem nome: **convolução*
 A mancha em si - o formato como um único ponto se espalha - se chama **kernel**, ou **PSF** (point spread function, "função de espalhamento de ponto").
 No caso do drone do desafio, a PSF é aproximadamente uma gaussiana: uma manchinha redonda, mais densa no centro, esmaecendo nas bordas.
 A "largura" dessa gaussiana é o parâmetro `σ` (sigma) - quanto maior σ, mais espalhada a mancha, mais borrada a imagem.
-O σ é sorteado por frame em `U(0, 3.5)` (faixa declarada na [spec](README.md#como-o-frame-foi-gerado)): a faixa é conhecida, mas o valor exato de cada frame não - sua solução estima o σ a partir da imagem ou roda sobre toda a faixa.
+O σ é sorteado por frame em `U(0, 3.5)` (faixa declarada na [spec](../README.md#como-o-frame-foi-gerado)): a faixa é conhecida, mas o valor exato de cada frame não - sua solução estima o σ a partir da imagem ou roda sobre toda a faixa.
 
 Visualmente, três níveis de borrão na mesma imagem:
 
@@ -125,8 +125,8 @@ Em 200 ms você não roda 50 iterações de Richardson-Lucy, mas 3 a 5 passos po
 
 ## Pra continuar
 
-- A spec completa do desafio está no [README](README.md).
-- O modelo de geração do frame - a estrutura matemática do borrão e do ruído, e as faixas dos parâmetros - está documentado na seção "[Como o frame foi gerado](README.md#como-o-frame-foi-gerado)".
+- A spec completa do desafio está no [README](../README.md).
+- O modelo de geração do frame - a estrutura matemática do borrão e do ruído, e as faixas dos parâmetros - está documentado na seção "[Como o frame foi gerado](../README.md#como-o-frame-foi-gerado)".
   Sua solução **pode e deve** explorar essa estrutura.
 - O código de referência está em [`reference/wiener.py`](reference/wiener.py) - leitura curta, ~50 linhas de Python + numpy.
   Boa primeira leitura pra ver o pipeline FFT -> filtro -> IFFT acontecendo na prática.
