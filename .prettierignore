@@ -1,0 +1,21 @@
+# Build + deps
+node_modules/
+dist/
+.astro/
+
+# Generated content (synced from challenge folders)
+src/content/
+src/data/
+
+# Lockfiles
+package-lock.json
+
+# Markdown is intentionally excluded from formatting - problem statements
+# follow a custom one-sentence-per-line style (see CLAUDE.md), and
+# Prettier's wrapping would fight that.
+*.md
+*.mdx
+
+# Per-challenge folders carry their own README.md plus dataset files
+# that aren't ours to format.
+2026-*/
