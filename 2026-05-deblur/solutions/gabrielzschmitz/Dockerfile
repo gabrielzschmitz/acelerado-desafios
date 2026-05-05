@@ -1,11 +1,19 @@
-FROM python:3.11-slim
+# Estágio 1: Compilação (Dinâmica)
+FROM alpine:3.19 AS builder
 
-ENV PIP_NO_CACHE_DIR=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+RUN apk add --no-cache g++ make fftw-dev
 
-RUN pip install --no-cache-dir numpy
+WORKDIR /app
+COPY solution.cpp .
 
-COPY solution.py /app/solution.py
+RUN g++ -O3 -std=c++20 solution.cpp -lfftw3f -lfftw3 -o solution
 
-CMD ["python3", "-B", "/app/solution.py"]
+# Estágio 2: Execução leve
+FROM alpine:3.19
+
+# Correção: apenas 'libgcc' em vez de 'gnu-libgcc'
+RUN apk add --no-cache fftw libstdc++ libgcc
+
+COPY --from=builder /app/solution /app/solution
+
+CMD ["/app/solution"]
